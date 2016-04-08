@@ -44,6 +44,10 @@ public class Path {
     //```
     public static final String sep = "/";
 
+    public static String basename(String p) {
+        return "";
+    }
+
     // Return the last portion of a path. Similar to the Unix basename command.
     //
     // Example:
@@ -55,10 +59,6 @@ public class Path {
     // // returns 'quux'
     //```
     public static String basename(String p, String ext) {
-        return "";
-    }
-
-    public static String basename(String p) {
         return "";
     }
 

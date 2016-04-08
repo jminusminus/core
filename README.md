@@ -43,6 +43,8 @@ An example on Windows:
 // returns ['foo', 'bar', 'baz']
 ```
 
+## static String basename(String p)
+
 ## static String basename(String p, String ext)
 Return the last portion of a path. Similar to the Unix basename command.
 
@@ -54,8 +56,6 @@ path.basename('/foo/bar/baz/asdf/quux.html')
 path.basename('/foo/bar/baz/asdf/quux.html', '.html')
 // returns 'quux'
 ```
-
-## static String basename(String p)
 
 ## static String dirname(String p)
 Return the directory name of a path. Similar to the Unix dirname command.
