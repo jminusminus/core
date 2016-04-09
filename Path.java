@@ -51,13 +51,13 @@ public class Path {
     // Return the last portion of a path. Similar to the Unix basename command.
     //
     // Example:
-    //```
+    // ```
     // path.basename('/foo/bar/baz/asdf/quux.html')
     // // returns 'quux.html'
     //
     // path.basename('/foo/bar/baz/asdf/quux.html', '.html')
     // // returns 'quux'
-    //```
+    // ```
     public static String basename(String p, String ext) {
         return "";
     }
@@ -74,7 +74,7 @@ public class Path {
     }
 
     // Return the extension of the path, from the last '.' to end of string in the last portion of the path. If there is no '.' in the last portion of the path or the first character of it is '.', then it returns an empty string. Examples:
-    //```
+    // ```
     // path.extname('index.html')
     // // returns '.html'
     //
@@ -89,7 +89,7 @@ public class Path {
     //
     // path.extname('.index')
     // // returns ''
-    //```
+    // ```
     public static String extname(String p) {
         return "";
     }
@@ -106,7 +106,7 @@ public class Path {
     //
     // Example:
     //
-    //```
+    // ```
     // path.format({
     //     root : "/",
     //     dir : "/home/user/dir",
@@ -124,7 +124,7 @@ public class Path {
     //     name : "file"
     // })
     // // returns '/file.txt'
-    //```
+    // ```
     public static String format() {
         return "";
     }
@@ -132,14 +132,14 @@ public class Path {
     // Determines whether path is an absolute path. An absolute path will always resolve to the same location, regardless of the working directory.
     //
     // Examples:
-    //```
+    // ```
     // Path.isAbsolute('/foo/bar') // true
     // Path.isAbsolute('/baz/..')  // true
     // Path.isAbsolute('qux/')     // false
     // Path.isAbsolute('.')        // false
     // Path.isAbsolute('')         // false
     // Path.isAbsolute(null)       // false
-    //```
+    // ```
     // Note: If the path string passed as parameter is a zero-length string, unlike other path module functions, it will be used as-is and false will be returned.
     public static String isAbsolute(String p) {
         return "";
@@ -150,10 +150,10 @@ public class Path {
     // Arguments must be strings. In v0.8, non-string arguments were silently ignored. In v0.10 and up, an exception is thrown.
     //
     // Example:
-    //```
+    // ```
     // path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')
     // // returns '/foo/bar/baz/asdf'
-    //```
+    // ```
     // Note: If the arguments to join have zero-length strings, unlike other path module functions, they will be ignored. If the joined path string is a zero-length string then '.' will be returned, which represents the current working directory.
     public static String join(String p) {
         return "";
@@ -164,10 +164,10 @@ public class Path {
     // When multiple slashes are found, they're replaced by a single one; when the path contains a trailing slash, it is preserved. On Windows backslashes are used.
     //
     // Example:
-    //```
+    // ```
     // path.normalize('/foo/bar//baz/asdf/quux/..')
     // // returns '/foo/bar/baz/asdf'
-    //```
+    // ```
     // Note: If the path string passed as argument is a zero-length string then '.' will be returned, which represents the current working directory.
     public static String normalize(String p) {
         return "";
@@ -176,7 +176,7 @@ public class Path {
     // Returns an object from a path string.
     //
     // An example on *nix:
-    //```
+    // ```
     // path.parse('/home/user/dir/file.txt')
     // // returns
     // // {
@@ -186,7 +186,7 @@ public class Path {
     // //    ext : ".txt",
     // //    name : "file"
     // // }
-    //```
+    // ```
     public static String parse(String p) {
         return "";
     }

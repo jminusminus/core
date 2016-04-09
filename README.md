@@ -100,20 +100,20 @@ Example:
 
 ```
 path.format({
-root : "/",
-dir : "/home/user/dir",
-base : "file.txt",
-ext : ".txt",
-name : "file"
+    root : "/",
+    dir : "/home/user/dir",
+    base : "file.txt",
+    ext : ".txt",
+    name : "file"
 });
 // returns '/home/user/dir/file.txt'
 
 // `root` will be used if `dir` is not specified and `name` + `ext` will be used
 // if `base` is not specified
 path.format({
-root : "/",
-ext : ".txt",
-name : "file"
+    root : "/",
+    ext : ".txt",
+    name : "file"
 })
 // returns '/file.txt'
 ```
