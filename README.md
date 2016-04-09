@@ -1,6 +1,7 @@
 
 # Path
 #### github.com.jminusminus.path
+[![Build Status](https://travis-ci.org/jminusminus/path.svg?branch=master)](https://travis-ci.org/jminusminus/path)
 ## Stability: 0 - Unstable
 This package contains utilities for handling and transforming file paths. Almost all these methods perform only string transformations. The file system is not consulted to check whether paths are valid.
 
