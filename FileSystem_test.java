@@ -22,9 +22,9 @@ public class FileSystem_test extends Test {
 
     public void test_readdir() {
         this.should("return an array of files");
-        String[] files = FileSystem.readdir(".");
+        String[] files = FileSystem.readdir("./fixtures/filesystem");
         java.util.Arrays.sort(files);
-        this.assertEqual(".git", files[0]);
+        this.assertEqual("a.txt", files[0]);
     }
 
     public void test_readdir_bad_path() {
