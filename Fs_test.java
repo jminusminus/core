@@ -14,6 +14,8 @@ public class Fs_test extends Test {
         test.run();
     }
 
+    protected String tmp = "./fixtures/filesystem/tmp.txt";
+
     public void test_new_FileSystem() {
         this.should("return an instance of Fs");
         Fs fs = new Fs();
@@ -111,5 +113,18 @@ public class Fs_test extends Test {
     public void test_access_read_write_execute_false() {
         this.should("return false as the file cannot be read, written and executed");
         this.assertEqual(false, Fs.access("./fixtures/filesystem/read_write.txt", 0777));
+    }
+
+    public void test_appendFile_new() {
+        this.should("create a new file and write the bytes to it");
+        this.assertEqual(true, Fs.appendFile(this.tmp, "test".getBytes()));
+        Fs.unlink(this.tmp);
+    }
+
+    public void test_appendFile_existing() {
+        this.should("append to an existing file and write the bytes to it");
+        Fs.appendFile(this.tmp, "test".getBytes());
+        this.assertEqual(true, Fs.appendFile(this.tmp, "test".getBytes()));
+        Fs.unlink(this.tmp);
     }
 }

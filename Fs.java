@@ -27,59 +27,31 @@ public class Fs {
     // If any of the accessibility checks fail, the error argument will be populated. 
     // The following example checks if the file /etc/passwd can be read and written by the current process.
     public static boolean access(String path, int mode) {
-        java.io.File f = new java.io.File(path);
-        switch (mode) {
-            case 0000:
-                return f.exists();
-            case 0111:
-                return f.canExecute();
-            case 0222:
-                return f.canWrite();
-            case 0333:
-                return f.canWrite() && f.canExecute();
-            case 0444:
-                return f.canRead();
-        }
-        return Fs.accessReadWriteExecute(f, mode);
+        return Fs.accessFile(new java.io.File(path), mode);
     }
 
-    protected static boolean accessReadWriteExecute(java.io.File f, int mode) {
-        switch (mode) {
-            case 0555:
-                return f.canRead() && f.canExecute();
-            case 0666:
-                return f.canRead() && f.canWrite();
-            case 0777:
-                return f.canRead() && f.canWrite() && f.canExecute();
-        }
-        return false;
-    }
-
-    // * file <String> filename
-    // * data <String> | <Buffer>
-    // * options <Object> | <String>
-    // * encoding <String> | <Null> default = 'utf8'
-    // * mode <Number> default = 0o666
-    // * flag <String> default = 'a'
-    // Asynchronously append data to a file, creating the file if it does not yet exist. data can be a string or a buffer.
+    // Append data to a file, creating the file if it does 
+    // not yet exist. Data can be a string or byte array.
     //
     // Example:
     //
-    // fs.appendFile('message.txt', 'data to append', (err) => {
-    //   if (err) throw err;
-    //   console.log('The "data to append" was appended to file!');
-    // });
-    // If options is a string, then it specifies the encoding. Example:
-    //
-    // fs.appendFile('message.txt', 'data to append', 'utf8', callback);
-    public static boolean appendFile(String file, byte[] data, String options) {
-        return false;
+    //     Fs.appendFile("message.txt", "data to append".getBytes());
+    public static boolean appendFile(String file, byte[] data) {
+        try {
+            java.nio.file.Files.write(java.nio.file.Paths.get(file), data, java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
     }
 
-    // Synchronous chmod(2). No arguments other than a possible exception are given to the completion callback.
+    // Change the mode of the given path to the given mode.
     public static boolean chmod(String path, int mode) {
-        return false;
+        return Fs.chmodFile(new java.io.File(path), mode);
     }
+
+
 
     // Synchronous chown(2). No arguments other than a possible exception are given to the completion callback.
     public static boolean chown(String path, String uid, String gid) {
@@ -148,9 +120,22 @@ public class Fs {
         return "";
     }
 
+    public static boolean mkdir(String path) {
+        return Fs.mkdir(path, 0777);
+    }
+
     // Synchronous mkdir(2). No arguments other than a possible exception are given to the completion callback. mode defaults to 0o777.
-    public static boolean mkdir(String path, String mode) {
-        return false;
+    public static boolean mkdir(String path, int mode) {
+        return (new java.io.File(path)).mkdir();
+    }
+
+    public static boolean mkdirs(String path) {
+        return Fs.mkdirs(path, 0777);
+    }
+
+    // Recusive mkdir
+    public static boolean mkdirs(String path, int mode) {
+        return (new java.io.File(path)).mkdirs();
     }
 
     // Synchronous file open. See open(2). flags can be:
@@ -192,7 +177,7 @@ public class Fs {
     // flags can also be a number as documented by open(2); commonly used constants are available from require('constants'). On Windows, flags are translated to their equivalent ones where applicable, e.g. O_WRONLY to FILE_GENERIC_WRITE, or O_EXCL|O_CREAT to CREATE_NEW, as accepted by CreateFileW.
     // 
     // On Linux, positional writes don't work when the file is opened in append mode. The kernel ignores the position argument and always appends the data to the end of the file.
-    public static String open(String path, String flags, String mode) {
+    public static String open(String path, String flags, int mode) {
         return "";
     }
 
@@ -286,7 +271,17 @@ public class Fs {
 
     // Synchronous unlink(2). No arguments other than a possible exception are given to the completion callback.
     public static boolean unlink(String path) {
-        return false;
+        return Fs.unlink(new java.io.File(path));
+    }
+
+    protected static boolean unlink(java.io.File f) {
+        try {
+            f.delete();
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
     }
 
     // Stop watching for changes on filename. If listener is specified, only that particular listener is removed. Otherwise, all listeners are removed and you have effectively stopped watching filename.
@@ -410,5 +405,105 @@ public class Fs {
     // Note that it is unsafe to use fs.writeFile multiple times on the same file without waiting for the callback. For this scenario, fs.createWriteStream is strongly recommended.
     public static int write(String fd, byte[] data, int position, String encoding) {
         return 0;
+    }
+
+    // Check if the current user can access the given file with the given mode.
+    protected static boolean accessFile(java.io.File f, int mode) {
+        switch (mode) {
+            case 0000:
+                return f.exists();
+            case 0111:
+                return f.canExecute();
+            case 0222:
+                return f.canWrite();
+            case 0333:
+                return f.canWrite() && f.canExecute();
+            case 0444:
+                return f.canRead();
+        }
+        return Fs.accessFileReadWriteExecute(f, mode);
+    }
+
+    // Carry on from Fs.access() for complexity break down.
+    protected static boolean accessFileReadWriteExecute(java.io.File f, int mode) {
+        switch (mode) {
+            case 0555:
+                return f.canRead() && f.canExecute();
+            case 0666:
+                return f.canRead() && f.canWrite();
+            case 0777:
+                return f.canRead() && f.canWrite() && f.canExecute();
+        }
+        return false;
+    }
+
+    // Change the mode of the given java.io.File to the given mode.
+    protected static boolean chmodFile(java.io.File f, int mode) {
+        switch (mode) {
+            case 0000:
+                return Fs.chmod0000(f);
+            case 0111:
+                return Fs.chmod0111(f);
+            case 0222:
+                return Fs.chmod0222(f);
+            case 0333:
+                return Fs.chmod0333(f);
+            case 0444:
+                return Fs.chmod0444(f);
+        }
+        return Fs.chmodFileReadWriteExecute(f, mode);
+    }
+
+    // Carry on from Fs.chmodFile() for complexity break down.
+    protected static boolean chmodFileReadWriteExecute(java.io.File f, int mode) {
+        switch (mode) {
+            case 0555:
+                return Fs.chmod0555(f);
+            case 0666:
+                return Fs.chmod0666(f);
+            case 0777:
+                return Fs.chmod0777(f);
+        }
+        return false;
+    }
+
+    // Change the mode of the given java.io.File to 0000.
+    protected static boolean chmod0000(java.io.File f) {
+        return f.setReadable(false) && f.setWritable(false) && f.setExecutable(false);
+    }
+
+    // Change the mode of the given java.io.File to 0111.
+    protected static boolean chmod0111(java.io.File f) {
+        return f.setReadable(false) && f.setWritable(false) && f.setExecutable(true);
+    }
+
+    // Change the mode of the given java.io.File to 0222.
+    protected static boolean chmod0222(java.io.File f) {
+        return f.setReadable(false) && f.setWritable(true) && f.setExecutable(false);
+    }
+
+    // Change the mode of the given java.io.File to 0333.
+    protected static boolean chmod0333(java.io.File f) {
+        return f.setReadable(false) && f.setWritable(true) && f.setExecutable(true);
+    }
+
+    // Change the mode of the given java.io.File to 0444.
+    protected static boolean chmod0444(java.io.File f) {
+        return f.setReadable(true) && f.setWritable(false) && f.setExecutable(false);
+    }
+
+    // Change the mode of the given java.io.File to 0555.
+    protected static boolean chmod0555(java.io.File f) {
+        return f.setReadable(true) && f.setWritable(false) && f.setExecutable(true);
+    }
+
+    // Change the mode of the given java.io.File to 0666.
+    protected static boolean chmod0666(java.io.File f) {
+        return f.setReadable(true) && f.setWritable(true) && f.setExecutable(false);
+    }
+
+    // Change the mode of the given java.io.File to 0777.
+    protected static boolean chmod0777(java.io.File f) {
+        return f.setReadable(true) && f.setWritable(true) && f.setExecutable(true);
     }
 }
