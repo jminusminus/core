@@ -134,8 +134,8 @@ public class Fs_test extends Test {
         this.assertEqual(true, Fs.unlink(this.tmp));
     }
 
-    public void test_unlink_error() {
-        this.should("create a file and then unlink it");
-        this.assertEqual(false, Fs.unlink(this.tmp));
+    public void test_unlink_no_file() {
+        this.should("return true even if the file doesn't exist");
+        this.assertEqual(true, Fs.unlink(this.tmp));
     }
 }
