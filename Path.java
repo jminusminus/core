@@ -89,25 +89,31 @@ public class Path {
         return p.substring(0, p.lastIndexOf(Path.sep));
     }
 
-    // Return the extension of the path, from the last '.' to end of string in the last portion of the path. If there is no '.' in the last portion of the path or the first character of it is '.', then it returns an empty string. Examples:
+    // Return the extension of the path, from the last '.' to end of string in the last portion of 
+    // the path. If there is no '.' in the last portion of the path or the first character of it 
+    // is '.', then it returns an empty string. Examples:
+    //
     // ```java
-    // path.extname('index.html')
+    // Path.extname('index.html')
     // // returns '.html'
     //
-    // path.extname('index.coffee.md')
+    // Path.extname('index.coffee.md')
     // // returns '.md'
     //
-    // path.extname('index.')
+    // Path.extname('index.')
     // // returns '.'
     //
-    // path.extname('index')
+    // Path.extname('index')
     // // returns ''
     //
-    // path.extname('.index')
+    // Path.extname('.index')
     // // returns ''
     // ```
     public static String extname(String p) {
-        return "";
+        if (p == null || p.isEmpty() || p.charAt(0) == '.' || p.lastIndexOf('.') == -1) {
+            return "";
+        }
+        return p.substring(p.lastIndexOf('.'));
     }
 
     // Returns a path string from an object. This is the opposite of path.parse.

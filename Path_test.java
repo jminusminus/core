@@ -36,13 +36,33 @@ public class Path_test extends Test {
     }
 
     public void test_dirname_without_ext() {
-        this.should("returns the basename without the ext");
+        this.should("returns the dirname without an ext");
         this.assertEqual("/foo/bar/baz/asdf", Path.dirname("/foo/bar/baz/asdf/quux"));
     }
 
     public void test_dirname_with_ext() {
-        this.should("returns the basename without the ext");
+        this.should("returns the dirname with an ext");
         this.assertEqual("/foo/bar/baz/asdf", Path.dirname("/foo/bar/baz/asdf/quux.html"));
+    }
+
+    public void test_extname_with_ext() {
+        this.should("returns the extname with an ext");
+        this.assertEqual(".html", Path.extname("index.html"));
+    }
+
+    public void test_extname_with_empty_ext() {
+        this.should("returns the extname with an empty ext");
+        this.assertEqual(".", Path.extname("index."));
+    }
+
+    public void test_extname_with_no_ext() {
+        this.should("returns the extname with no ext");
+        this.assertEqual("", Path.extname("index"));
+    }
+
+    public void test_extname_with_start_ext() {
+        this.should("returns the extname with no ext");
+        this.assertEqual("", Path.extname(".index"));
     }
 
     public void test_isAbsolute_true() {
