@@ -16,7 +16,7 @@ public class FileSystem {
     // * fs.W_OK - File can be written by the calling process.
     // * fs.X_OK - File can be executed by the calling process. This has no effect on Windows (will behave like fs.F_OK).
     // The final argument, callback, is a callback function that is invoked with a possible error argument. If any of the accessibility checks fail, the error argument will be populated. The following example checks if the file /etc/passwd can be read and written by the current process.
-    public static boolean access(String path) {
+    public static boolean access(String path, String mode) {
         return false;
     }
 
