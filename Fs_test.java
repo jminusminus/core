@@ -127,4 +127,15 @@ public class Fs_test extends Test {
         this.assertEqual(true, Fs.appendFile(this.tmp, "test".getBytes()));
         Fs.unlink(this.tmp);
     }
+
+    public void test_unlink() {
+        this.should("create a file and then unlink it");
+        Fs.appendFile(this.tmp, "test".getBytes());
+        this.assertEqual(true, Fs.unlink(this.tmp));
+    }
+
+    public void test_unlink_error() {
+        this.should("create a file and then unlink it");
+        this.assertEqual(false, Fs.unlink(this.tmp));
+    }
 }
