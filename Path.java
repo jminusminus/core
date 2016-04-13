@@ -55,11 +55,12 @@ public class Path {
     // Return the last portion of a path. Similar to the Unix basename command.
     //
     // Example:
+    //
     // ```java
-    // path.basename('/foo/bar/baz/asdf/quux.html')
+    // Path.basename('/foo/bar/baz/asdf/quux.html')
     // // returns 'quux.html'
     //
-    // path.basename('/foo/bar/baz/asdf/quux.html', '.html')
+    // Path.basename('/foo/bar/baz/asdf/quux.html', '.html')
     // // returns 'quux'
     // ```
     public static String basename(String p, String ext) {
@@ -76,12 +77,16 @@ public class Path {
     // Return the directory name of a path. Similar to the Unix dirname command.
     //
     // Example:
+    //
     // ```java
-    // path.dirname('/foo/bar/baz/asdf/quux')
+    // Path.dirname('/foo/bar/baz/asdf/quux')
     // // returns '/foo/bar/baz/asdf'
     // ```
     public static String dirname(String p) {
-        return "";
+        if (p == null || p.isEmpty()) {
+            return "";
+        }
+        return p.substring(0, p.lastIndexOf(Path.sep));
     }
 
     // Return the extension of the path, from the last '.' to end of string in the last portion of the path. If there is no '.' in the last portion of the path or the first character of it is '.', then it returns an empty string. Examples:

@@ -35,6 +35,16 @@ public class Path_test extends Test {
         this.assertEqual("quux", Path.basename("/foo/bar/baz/asdf/quux.html", ".html"));
     }
 
+    public void test_dirname_without_ext() {
+        this.should("returns the basename without the ext");
+        this.assertEqual("/foo/bar/baz/asdf", Path.dirname("/foo/bar/baz/asdf/quux"));
+    }
+
+    public void test_dirname_with_ext() {
+        this.should("returns the basename without the ext");
+        this.assertEqual("/foo/bar/baz/asdf", Path.dirname("/foo/bar/baz/asdf/quux.html"));
+    }
+
     public void test_isAbsolute_true() {
         this.should("returns true as the path is absolute");
         this.assertEqual(true, Path.isAbsolute("/foo"));
