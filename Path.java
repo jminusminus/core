@@ -7,7 +7,7 @@
 // [![Build Status](https://travis-ci.org/jminusminus/path.svg?branch=master)](https://travis-ci.org/jminusminus/path)
 // ## Stability: 0 - Unstable
 // This package contains utilities for handling and transforming file paths. Almost all these methods perform only string transformations. The file system is not consulted to check whether paths are valid.
-package github.com.jminusminus.path;
+package github.com.jminusminus.core;
 
 public class Path {
 
@@ -44,6 +44,8 @@ public class Path {
     // // returns ['foo', 'bar', 'baz']
     //```
     public static final String sep = "/";
+
+    public static final String home = "~";
 
     public static String basename(String p) {
         return "";
@@ -142,8 +144,8 @@ public class Path {
     // Path.isAbsolute(null)       // false
     // ```
     // Note: If the path string passed as parameter is a zero-length string, unlike other path module functions, it will be used as-is and false will be returned.
-    public static String isAbsolute(String p) {
-        return "";
+    public static boolean isAbsolute(String p) {
+        return Path.sep.equals(String.valueOf(p.charAt(0)));
     }
 
     // Join all arguments together and normalize the resulting path.
@@ -171,7 +173,19 @@ public class Path {
     // ```
     // Note: If the path string passed as argument is a zero-length string then '.' will be returned, which represents the current working directory.
     public static String normalize(String p) {
-        return "";
+        if (p.isEmpty()) {
+            p = ".";
+        }
+        switch (String.valueOf(p.charAt(0))) {
+            case Path.sep:
+                break;
+            case Path.home: // User home.
+                p = System.getProperty("user.home") + Path.sep + p;
+                break;
+            default: // Current working directory.
+                p = System.getProperty("user.dir") + Path.sep + p;
+        }
+        return Path.sep + Path.normalizeArray(p.split(Path.sep));
     }
 
     // Returns an object from a path string.
@@ -243,5 +257,27 @@ public class Path {
     // Note: If the arguments to resolve have zero-length strings then the current working directory will be used instead of them.
     public static String resolve(String... parts) {
         return "";
+    }
+
+    // resolves . and .. elements in a path array with directory names there
+    // must be no slashes or device names (c:\) in the array
+    // (so also no leading and trailing slashes - it does not distinguish
+    // relative and absolute paths)
+    protected static String normalizeArray(String[] parts) {
+        String path = "";
+        for (String part : parts) {
+            // Ignore empty parts.
+            if (part.isEmpty() || ".".equals(part)) {
+                continue;
+            }
+            if ("..".equals(part)) {
+                // Remove the last directory.
+                path = path.substring(0, path.lastIndexOf(Path.sep));
+            } else {
+                path += Path.sep + part;
+            }
+        }
+        // Remove the last separator.
+        return path.substring(1);
     }
 }
