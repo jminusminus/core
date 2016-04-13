@@ -26,7 +26,12 @@ public class Path_test extends Test {
     }
 
     public void test_basename_no_ext() {
-        this.should("returns the basename with ext");
+        this.should("returns the basename with ext that is not found");
+        this.assertEqual("quux", Path.basename("/foo/bar/baz/asdf/quux", ".html"));
+    }
+
+    public void test_basename_without_ext() {
+        this.should("returns the basename without the ext");
         this.assertEqual("quux", Path.basename("/foo/bar/baz/asdf/quux.html", ".html"));
     }
 
