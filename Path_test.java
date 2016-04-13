@@ -40,6 +40,16 @@ public class Path_test extends Test {
         this.assertEqual(false, Path.isAbsolute("~/foo"));
     }
 
+    public void test_isAbsolute_false_empty() {
+        this.should("returns false as the path is empty");
+        this.assertEqual(false, Path.isAbsolute(""));
+    }
+
+    public void test_isAbsolute_false_null() {
+        this.should("returns false as the path is null");
+        this.assertEqual(false, Path.isAbsolute(null));
+    }
+
     public void test_join() {
         this.should("return an absolute joined path");
         String path = Path.join("/foo", "bar", "baz/asdf", "/quux/", "..");

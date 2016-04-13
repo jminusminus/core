@@ -146,6 +146,9 @@ public class Path {
     // ```
     // Note: If the path string passed as parameter is a zero-length string, unlike other path module functions, it will be used as-is and false will be returned.
     public static boolean isAbsolute(String p) {
+        if (p == null || p.isEmpty()) {
+            return false;
+        }
         return Path.sep.equals(String.valueOf(p.charAt(0)));
     }
 
@@ -155,7 +158,7 @@ public class Path {
     //
     // Example:
     // ```java
-    // path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')
+    // Path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')
     // // returns '/foo/bar/baz/asdf'
     // ```
     // Note: If the arguments to join have zero-length strings, unlike other path module functions, they will be ignored. If the joined path string is a zero-length string then '.' will be returned, which represents the current working directory.
