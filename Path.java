@@ -238,20 +238,37 @@ public class Path {
 
     // Solve the relative path from from to to.
     // 
-    // At times we have two absolute paths, and we need to derive the relative path from one to the other. This is actually the reverse transform of path.resolve, which means we see that:
+    // At times we have two absolute paths, and we need to derive the relative path from one to the other. 
+    // This is actually the reverse transform of path.resolve, which means we see that:
+    //
     // ```java
-    // path.resolve(from, path.relative(from, to)) == path.resolve(to)
+    // Path.resolve(from, path.relative(from, to)) == path.resolve(to)
     // Examples:
     // 
-    // path.relative('C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb')
+    // Path.relative('C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb')
     // // returns '..\\..\\impl\\bbb'
     // 
-    // path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb')
+    // Path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb')
     // // returns '../../impl/bbb'
     // ```
-    // Note: If the arguments to relative have zero-length strings then the current working directory will be used instead of the zero-length strings. If both the paths are the same then a zero-length string will be returned.
+    // 
+    // Note: If the arguments to relative have zero-length strings then the current working directory 
+    // will be used instead of the zero-length strings. If both the paths are the same then a 
+    // zero-length string will be returned.
     public static String relative(String from, String to) {
-        return "";
+        String[] fromParts = Path.normalize(from).split(Path.sep);
+        String[] toParts = Path.normalize(to).split(Path.sep);
+        String path = "";
+        for (int i = 0; i < toParts.length; i++) {
+            if (!fromParts[i].isEmpty()) {
+                if (fromParts[i].equals(toParts[i])) {
+                    path += Path.sep + "..";
+                } else {
+                    path += Path.sep + toParts[i];
+                }
+            }
+        }
+        return path.substring(1);
     }
 
     // Resolves to to an absolute path.
@@ -286,7 +303,19 @@ public class Path {
     // ```
     // Note: If the arguments to resolve have zero-length strings then the current working directory will be used instead of them.
     public static String resolve(String... parts) {
-        return "";
+        String root = "";
+        String path = "";
+        for (String part : parts) {
+            if (!part.isEmpty() && Path.sep.equals(String.valueOf(part.charAt(0)))) {
+                root = part + Path.sep;
+            } else {
+                path += Path.sep + part;
+            }
+        }
+        if (path.length() > 0) {
+            path = path.substring(1);
+        }
+        return Path.normalize(root + path);
     }
 
     // Resolves . and .. elements in a path array with directory names there

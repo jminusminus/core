@@ -118,4 +118,32 @@ public class Path_test extends Test {
         String path = Path.normalize("/foo/bar//baz/asdf/quux/..");
         this.assertEqual("/foo/bar/baz/asdf", path);
     }
+
+    public void test_relative() {
+        this.should("return a relative path");
+        String path = Path.relative("/data/orandea/test/aaa", "/data/orandea/impl/bbb");
+        this.assertEqual("../../impl/bbb", path);
+    }
+
+    public void test_resolve_relative() {
+        this.should("return a resolve relative path");
+        String from = "/data/orandea/test/aaa";
+        String to = "/data/orandea/impl/bbb";
+        this.assertEqual(Path.resolve(from, Path.relative(from, to)), Path.resolve(to));
+    }
+
+    public void test_resolve_relative_second() {
+        this.should("returns absolute path of joined parts");
+        this.assertEqual("/foo/bar/baz", Path.resolve("/foo/bar", "./baz"));
+    }
+
+    public void test_resolve_absolute_second() {
+        this.should("returns absolute path of last part");
+        this.assertEqual("/tmp/file", Path.resolve("/foo/bar", "/tmp/file/"));
+    }
+
+    public void test_resolve_absolute_mixed() {
+        this.should("returns absolute path of all parts");
+        this.assertEqual(System.getProperty("user.dir") + "/wwwroot/static_files/gif/image.gif", Path.resolve("wwwroot", "static_files/png/", "../gif/image.gif"));
+    }
 }
