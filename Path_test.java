@@ -20,21 +20,47 @@ public class Path_test extends Test {
         this.assertEqual("github.com.jminusminus.core.Path", p.getClass().getName());
     }
 
+    public void test_isAbsolute_true() {
+        this.should("returns true as the path is absolute");
+        this.assertEqual(true, Path.isAbsolute("/foo"));
+    }
+
+    public void test_isAbsolute_false() {
+        this.should("returns false as the path is NOT absolute");
+        this.assertEqual(false, Path.isAbsolute("foo"));
+    }
+
+    public void test_isAbsolute_false_relative() {
+        this.should("returns false as the path is relative");
+        this.assertEqual(false, Path.isAbsolute("./foo"));
+    }
+
+    public void test_isAbsolute_false_home() {
+        this.should("returns false as the path is home");
+        this.assertEqual(false, Path.isAbsolute("~/foo"));
+    }
+
+    public void test_join() {
+        this.should("return an absolute joined path");
+        String path = Path.join("/foo", "bar", "baz/asdf", "/quux/", "..");
+        this.assertEqual("/foo/bar/baz/asdf", path);
+    }
+
     public void test_normalize_with_first() {
-    	this.should("return an absolute normalized path with first ..");
-    	String path = Path.normalize("../foo/bar//baz/asdf/quux");
-    	this.assertEqual("/foo/bar/baz/asdf/quux", path);
+        this.should("return an absolute normalized path with first ..");
+        String path = Path.normalize("../foo/bar//baz/asdf/quux");
+        this.assertEqual("/foo/bar/baz/asdf/quux", path);
     }
 
     public void test_normalize_with_mid() {
-    	this.should("return an absolute normalized path with mid ..");
-    	String path = Path.normalize("/foo/bar//baz/../asdf/quux/..");
-    	this.assertEqual("/foo/bar/asdf", path);
+        this.should("return an absolute normalized path with mid ..");
+        String path = Path.normalize("/foo/bar//baz/../asdf/quux/..");
+        this.assertEqual("/foo/bar/asdf", path);
     }
 
     public void test_normalize_with_last() {
-    	this.should("return an absolute normalized path with last ..");
-    	String path = Path.normalize("/foo/bar//baz/asdf/quux/..");
-    	this.assertEqual("/foo/bar/baz/asdf", path);
+        this.should("return an absolute normalized path with last ..");
+        String path = Path.normalize("/foo/bar//baz/asdf/quux/..");
+        this.assertEqual("/foo/bar/baz/asdf", path);
     }
 }

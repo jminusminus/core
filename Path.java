@@ -45,6 +45,7 @@ public class Path {
     //```
     public static final String sep = "/";
 
+    // The platform-specific home directory. '%HOMEPATH%' or '~'.
     public static final String home = "~";
 
     public static String basename(String p) {
@@ -158,19 +159,22 @@ public class Path {
     // // returns '/foo/bar/baz/asdf'
     // ```
     // Note: If the arguments to join have zero-length strings, unlike other path module functions, they will be ignored. If the joined path string is a zero-length string then '.' will be returned, which represents the current working directory.
-    public static String join(String p) {
-        return "";
+    public static String join(String... p) {
+        return Path.normalize(String.join(Path.sep, p));
     }
 
     // Normalize a string path, taking care of '..' and '.' parts.
     //
-    // When multiple slashes are found, they're replaced by a single one; when the path contains a trailing slash, it is preserved. On Windows backslashes are used.
+    // When multiple slashes are found, they're replaced by a single one; 
+    // when the path contains a trailing slash, it is preserved. On Windows backslashes are used.
     //
     // Example:
+    //
     // ```java
-    // path.normalize('/foo/bar//baz/asdf/quux/..')
+    // Path.normalize('/foo/bar//baz/asdf/quux/..')
     // // returns '/foo/bar/baz/asdf'
     // ```
+    //
     // Note: If the path string passed as argument is a zero-length string then '.' will be returned, which represents the current working directory.
     public static String normalize(String p) {
         if (p.isEmpty()) {
@@ -264,10 +268,9 @@ public class Path {
         return "";
     }
 
-    // resolves . and .. elements in a path array with directory names there
+    // Resolves . and .. elements in a path array with directory names there
     // must be no slashes or device names (c:\) in the array
-    // (so also no leading and trailing slashes - it does not distinguish
-    // relative and absolute paths)
+    // (so also no leading and trailing slashes - it does not distinguish relative and absolute paths).
     protected static String normalizeArray(String[] parts) {
         String path = "";
         for (String part : parts) {
@@ -282,7 +285,7 @@ public class Path {
                 path += Path.sep + part;
             }
         }
-        // Remove the last separator.
+        // Remove the first separator.
         return path.substring(1);
     }
 }
