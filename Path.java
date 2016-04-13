@@ -11,15 +11,25 @@ package github.com.jminusminus.core;
 
 public class Path {
 
+    // The path root.
     public String root = "";
+
+    // The directory path.
     public String dir = "";
+
+    // The directory basename.
     public String base = "";
+
+    // The file extension.
     public String ext = "";
+
+    // The file name.
     public String name = "";
 
-    // The platform-specific path delimiter, ; or ":".
+    // The platform-specific path delimiter, ";" or ":".
     //
     // An example on *nix:
+    //
     // ```java
     // console.log(process.env.PATH)
     // // "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
@@ -40,6 +50,7 @@ public class Path {
     // The platform-specific file separator. "\\" or "/".
     //
     // An example on *nix:
+    //
     //```java
     // "foo/bar/baz".split(path.sep)
     // // returns ["foo", "bar", "baz"]
@@ -175,6 +186,7 @@ public class Path {
     // Determines whether path is an absolute path. An absolute path will always resolve to the same location, regardless of the working directory.
     //
     // Examples:
+    //
     // ```java
     // Path.isAbsolute("/foo/bar") // true
     // Path.isAbsolute("/baz/..")  // true
@@ -244,9 +256,9 @@ public class Path {
     // An example on *nix:
     //
     // ```java
-    // path.parse("/home/user/dir/file.txt")
+    // Path.parse("/home/user/dir/file.txt")
     // // returns
-    // // {
+    // // Path {
     // //    root : "/",
     // //    dir : "/home/user/dir",
     // //    base : "file.txt",
@@ -272,7 +284,7 @@ public class Path {
     // This is actually the reverse transform of path.resolve, which means we see that:
     //
     // ```java
-    // Path.resolve(from, path.relative(from, to)) == path.resolve(to)
+    // Path.resolve(from, Path.relative(from, to)) == Path.resolve(to)
     // Examples:
     // 
     // Path.relative("C:\\orandea\\test\\aaa", "C:\\orandea\\impl\\bbb")
@@ -306,10 +318,13 @@ public class Path {
     // If to isn"t already absolute from arguments are prepended in right to left order, until an absolute path is found. If after using all from paths still no absolute path is found, the current working directory is used as well. The resulting path is normalized, and trailing slashes are removed unless the path gets resolved to the root directory. Non-string from arguments are ignored.
     // 
     // Another way to think of it is as a sequence of cd commands in a shell.
+    //
     // ```java
-    // path.resolve("foo/bar", "/tmp/file/", "..", "a/../subfile");
+    // Path.resolve("foo/bar", "/tmp/file/", "..", "a/../subfile");
     // ```
+    //
     // Is similar to:
+    //
     // ```java
     // cd foo/bar
     // cd /tmp/file/
@@ -317,17 +332,19 @@ public class Path {
     // cd a/../subfile
     // pwd
     // ```
+    //
     // The difference is that the different paths don"t need to exist and may also be files.
     // 
     // Examples:
+    //
     // ```java
-    // path.resolve("/foo/bar", "./baz")
+    // Path.resolve("/foo/bar", "./baz")
     // // returns "/foo/bar/baz"
     // 
-    // path.resolve("/foo/bar", "/tmp/file/")
+    // Path.resolve("/foo/bar", "/tmp/file/")
     // // returns "/tmp/file"
     // 
-    // path.resolve("wwwroot", "static_files/png/", "../gif/image.gif")
+    // Path.resolve("wwwroot", "static_files/png/", "../gif/image.gif")
     // // if currently in /home/myself/node, it returns
     // // "/home/myself/node/wwwroot/static_files/gif/image.gif"
     // ```
