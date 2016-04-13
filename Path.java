@@ -182,6 +182,11 @@ public class Path {
             case Path.home: // User home.
                 p = System.getProperty("user.home") + Path.sep + p;
                 break;
+            case ".":
+                if (p.length() > 1 && p.charAt(1) == '.') {
+
+                    break;
+                }
             default: // Current working directory.
                 p = System.getProperty("user.dir") + Path.sep + p;
         }
@@ -270,10 +275,10 @@ public class Path {
             if (part.isEmpty() || ".".equals(part)) {
                 continue;
             }
-            if ("..".equals(part)) {
+            if ("..".equals(part) && path.length() > 0) {
                 // Remove the last directory.
                 path = path.substring(0, path.lastIndexOf(Path.sep));
-            } else {
+            } else if (!"..".equals(part)) {
                 path += Path.sep + part;
             }
         }

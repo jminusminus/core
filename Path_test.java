@@ -22,8 +22,8 @@ public class Path_test extends Test {
 
     public void test_normalize_with_first() {
     	this.should("return an absolute normalized path with first ..");
-    	String path = Path.normalize("/foo/../bar//baz/asdf/quux");
-    	this.assertEqual("/bar/baz/asdf/quux", path);
+    	String path = Path.normalize("../foo/bar//baz/asdf/quux");
+    	this.assertEqual("/foo/bar/baz/asdf/quux", path);
     }
 
     public void test_normalize_with_mid() {
