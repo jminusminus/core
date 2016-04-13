@@ -20,6 +20,16 @@ public class Path_test extends Test {
         this.assertEqual("github.com.jminusminus.core.Path", p.getClass().getName());
     }
 
+    public void test_basename_ext() {
+        this.should("returns the basename with ext");
+        this.assertEqual("quux.html", Path.basename("/foo/bar/baz/asdf/quux.html"));
+    }
+
+    public void test_basename_no_ext() {
+        this.should("returns the basename with ext");
+        this.assertEqual("quux", Path.basename("/foo/bar/baz/asdf/quux.html", ".html"));
+    }
+
     public void test_isAbsolute_true() {
         this.should("returns true as the path is absolute");
         this.assertEqual(true, Path.isAbsolute("/foo"));

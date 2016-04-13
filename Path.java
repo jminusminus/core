@@ -49,7 +49,7 @@ public class Path {
     public static final String home = "~";
 
     public static String basename(String p) {
-        return "";
+        return Path.basename(p, null);
     }
 
     // Return the last portion of a path. Similar to the Unix basename command.
@@ -63,7 +63,14 @@ public class Path {
     // // returns 'quux'
     // ```
     public static String basename(String p, String ext) {
-        return "";
+        if (p == null || p.isEmpty()) {
+            return "";
+        }
+        String basename = p.substring(p.lastIndexOf(Path.sep) + 1);
+        if (ext == null || ext.isEmpty()) {
+            return basename;
+        }
+        return basename.replace(ext, "");
     }
 
     // Return the directory name of a path. Similar to the Unix dirname command.
