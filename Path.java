@@ -17,41 +17,41 @@ public class Path {
     public String ext = "";
     public String name = "";
 
-    // The platform-specific path delimiter, ; or ':'.
+    // The platform-specific path delimiter, ; or ":".
     //
     // An example on *nix:
     // ```java
     // console.log(process.env.PATH)
-    // // '/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin'
+    // // "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
     // 
     // process.env.PATH.split(path.delimiter)
-    // // returns ['/usr/bin', '/bin', '/usr/sbin', '/sbin', '/usr/local/bin']
+    // // returns ["/usr/bin", "/bin", "/usr/sbin", "/sbin", "/usr/local/bin"]
     // ```
     // An example on Windows:
     // ```java
     // console.log(process.env.PATH)
-    // // 'C:\Windows\system32;C:\Windows;C:\Program Files\node\'
+    // // "C:\Windows\system32;C:\Windows;C:\Program Files\node\"
     //
     // process.env.PATH.split(path.delimiter)
-    // // returns ['C:\\Windows\\system32', 'C:\\Windows', 'C:\\Program Files\\node\\']
+    // // returns ["C:\\Windows\\system32", "C:\\Windows", "C:\\Program Files\\node\\"]
     // ```
     public static final String delimiter = ":";
 
-    // The platform-specific file separator. '\\' or '/'.
+    // The platform-specific file separator. "\\" or "/".
     //
     // An example on *nix:
     //```java
-    // 'foo/bar/baz'.split(path.sep)
-    // // returns ['foo', 'bar', 'baz']
+    // "foo/bar/baz".split(path.sep)
+    // // returns ["foo", "bar", "baz"]
     //```
     // An example on Windows:
     //```java
-    // 'foo\\bar\\baz'.split(path.sep)
-    // // returns ['foo', 'bar', 'baz']
+    // "foo\\bar\\baz".split(path.sep)
+    // // returns ["foo", "bar", "baz"]
     //```
     public static final String sep = "/";
 
-    // The platform-specific home directory. '%HOMEPATH%' or '~'.
+    // The platform-specific home directory. "%HOMEPATH%" or "~".
     public static final String home = "~";
 
     public static String basename(String p) {
@@ -63,11 +63,11 @@ public class Path {
     // Example:
     //
     // ```java
-    // Path.basename('/foo/bar/baz/asdf/quux.html')
-    // // returns 'quux.html'
+    // Path.basename("/foo/bar/baz/asdf/quux.html")
+    // // returns "quux.html"
     //
-    // Path.basename('/foo/bar/baz/asdf/quux.html', '.html')
-    // // returns 'quux'
+    // Path.basename("/foo/bar/baz/asdf/quux.html", ".html")
+    // // returns "quux"
     // ```
     public static String basename(String p, String ext) {
         if (p == null || p.isEmpty()) {
@@ -85,8 +85,8 @@ public class Path {
     // Example:
     //
     // ```java
-    // Path.dirname('/foo/bar/baz/asdf/quux')
-    // // returns '/foo/bar/baz/asdf'
+    // Path.dirname("/foo/bar/baz/asdf/quux")
+    // // returns "/foo/bar/baz/asdf"
     // ```
     public static String dirname(String p) {
         if (p == null || p.isEmpty()) {
@@ -95,31 +95,31 @@ public class Path {
         return p.substring(0, p.lastIndexOf(Path.sep));
     }
 
-    // Return the extension of the path, from the last '.' to end of string in the last portion of 
-    // the path. If there is no '.' in the last portion of the path or the first character of it 
-    // is '.', then it returns an empty string. Examples:
+    // Return the extension of the path, from the last "." to end of string in the last portion of 
+    // the path. If there is no "." in the last portion of the path or the first character of it 
+    // is ".", then it returns an empty string. Examples:
     //
     // ```java
-    // Path.extname('index.html')
-    // // returns '.html'
+    // Path.extname("index.html")
+    // // returns ".html"
     //
-    // Path.extname('index.coffee.md')
-    // // returns '.md'
+    // Path.extname("index.coffee.md")
+    // // returns ".md"
     //
-    // Path.extname('index.')
-    // // returns '.'
+    // Path.extname("index.")
+    // // returns "."
     //
-    // Path.extname('index')
-    // // returns ''
+    // Path.extname("index")
+    // // returns ""
     //
-    // Path.extname('.index')
-    // // returns ''
+    // Path.extname(".index")
+    // // returns ""
     // ```
     public static String extname(String p) {
-        if (p == null || p.isEmpty() || p.charAt(0) == '.' || p.lastIndexOf('.') == -1) {
+        if (p == null || p.isEmpty() || p.charAt(0) == '.' || p.lastIndexOf(".") == -1) {
             return "";
         }
-        return p.substring(p.lastIndexOf('.'));
+        return p.substring(p.lastIndexOf("."));
     }
 
     // Returns a path string from an object. This is the opposite of Path.parse.
@@ -148,7 +148,7 @@ public class Path {
     //     ext : ".txt",
     //     name : "file"
     // });
-    // // returns '/home/user/dir/file.txt'
+    // // returns "/home/user/dir/file.txt"
     //
     // // `root` will be used if `dir` is not specified and `name` + `ext` will be used
     // // if `base` is not specified
@@ -157,7 +157,7 @@ public class Path {
     //     ext : ".txt",
     //     name : "file"
     // })
-    // // returns '/file.txt'
+    // // returns "/file.txt"
     // ```
     public String toString() {
         if (!this.dir.isEmpty() && !this.base.isEmpty()) {
@@ -176,11 +176,11 @@ public class Path {
     //
     // Examples:
     // ```java
-    // Path.isAbsolute('/foo/bar') // true
-    // Path.isAbsolute('/baz/..')  // true
-    // Path.isAbsolute('qux/')     // false
-    // Path.isAbsolute('.')        // false
-    // Path.isAbsolute('')         // false
+    // Path.isAbsolute("/foo/bar") // true
+    // Path.isAbsolute("/baz/..")  // true
+    // Path.isAbsolute("qux/")     // false
+    // Path.isAbsolute(".")        // false
+    // Path.isAbsolute("")         // false
     // Path.isAbsolute(null)       // false
     // ```
     // Note: If the path string passed as parameter is a zero-length string, unlike other path module functions, it will be used as-is and false will be returned.
@@ -197,27 +197,27 @@ public class Path {
     //
     // Example:
     // ```java
-    // Path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')
-    // // returns '/foo/bar/baz/asdf'
+    // Path.join("/foo", "bar", "baz/asdf", "quux", "..")
+    // // returns "/foo/bar/baz/asdf"
     // ```
-    // Note: If the arguments to join have zero-length strings, unlike other path module functions, they will be ignored. If the joined path string is a zero-length string then '.' will be returned, which represents the current working directory.
+    // Note: If the arguments to join have zero-length strings, unlike other path module functions, they will be ignored. If the joined path string is a zero-length string then "." will be returned, which represents the current working directory.
     public static String join(String... p) {
         return Path.normalize(String.join(Path.sep, p));
     }
 
-    // Normalize a string path, taking care of '..' and '.' parts.
+    // Normalize a string path, taking care of ".." and "." parts.
     //
-    // When multiple slashes are found, they're replaced by a single one; 
+    // When multiple slashes are found, they"re replaced by a single one; 
     // when the path contains a trailing slash, it is preserved. On Windows backslashes are used.
     //
     // Example:
     //
     // ```java
-    // Path.normalize('/foo/bar//baz/asdf/quux/..')
-    // // returns '/foo/bar/baz/asdf'
+    // Path.normalize("/foo/bar//baz/asdf/quux/..")
+    // // returns "/foo/bar/baz/asdf"
     // ```
     //
-    // Note: If the path string passed as argument is a zero-length string then '.' will be returned, which represents the current working directory.
+    // Note: If the path string passed as argument is a zero-length string then "." will be returned, which represents the current working directory.
     public static String normalize(String p) {
         if (p.isEmpty()) {
             p = ".";
@@ -244,7 +244,7 @@ public class Path {
     // An example on *nix:
     //
     // ```java
-    // path.parse('/home/user/dir/file.txt')
+    // path.parse("/home/user/dir/file.txt")
     // // returns
     // // {
     // //    root : "/",
@@ -275,11 +275,11 @@ public class Path {
     // Path.resolve(from, path.relative(from, to)) == path.resolve(to)
     // Examples:
     // 
-    // Path.relative('C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb')
-    // // returns '..\\..\\impl\\bbb'
+    // Path.relative("C:\\orandea\\test\\aaa", "C:\\orandea\\impl\\bbb")
+    // // returns "..\\..\\impl\\bbb"
     // 
-    // Path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb')
-    // // returns '../../impl/bbb'
+    // Path.relative("/data/orandea/test/aaa", "/data/orandea/impl/bbb")
+    // // returns "../../impl/bbb"
     // ```
     // 
     // Note: If the arguments to relative have zero-length strings then the current working directory 
@@ -303,11 +303,11 @@ public class Path {
 
     // Resolves to to an absolute path.
     // 
-    // If to isn't already absolute from arguments are prepended in right to left order, until an absolute path is found. If after using all from paths still no absolute path is found, the current working directory is used as well. The resulting path is normalized, and trailing slashes are removed unless the path gets resolved to the root directory. Non-string from arguments are ignored.
+    // If to isn"t already absolute from arguments are prepended in right to left order, until an absolute path is found. If after using all from paths still no absolute path is found, the current working directory is used as well. The resulting path is normalized, and trailing slashes are removed unless the path gets resolved to the root directory. Non-string from arguments are ignored.
     // 
     // Another way to think of it is as a sequence of cd commands in a shell.
     // ```java
-    // path.resolve('foo/bar', '/tmp/file/', '..', 'a/../subfile');
+    // path.resolve("foo/bar", "/tmp/file/", "..", "a/../subfile");
     // ```
     // Is similar to:
     // ```java
@@ -317,19 +317,19 @@ public class Path {
     // cd a/../subfile
     // pwd
     // ```
-    // The difference is that the different paths don't need to exist and may also be files.
+    // The difference is that the different paths don"t need to exist and may also be files.
     // 
     // Examples:
     // ```java
-    // path.resolve('/foo/bar', './baz')
-    // // returns '/foo/bar/baz'
+    // path.resolve("/foo/bar", "./baz")
+    // // returns "/foo/bar/baz"
     // 
-    // path.resolve('/foo/bar', '/tmp/file/')
-    // // returns '/tmp/file'
+    // path.resolve("/foo/bar", "/tmp/file/")
+    // // returns "/tmp/file"
     // 
-    // path.resolve('wwwroot', 'static_files/png/', '../gif/image.gif')
+    // path.resolve("wwwroot", "static_files/png/", "../gif/image.gif")
     // // if currently in /home/myself/node, it returns
-    // // '/home/myself/node/wwwroot/static_files/gif/image.gif'
+    // // "/home/myself/node/wwwroot/static_files/gif/image.gif"
     // ```
     // Note: If the arguments to resolve have zero-length strings then the current working directory will be used instead of them.
     public static String resolve(String... parts) {
