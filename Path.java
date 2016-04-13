@@ -11,6 +11,12 @@ package github.com.jminusminus.core;
 
 public class Path {
 
+    public String root = "";
+    public String dir = "";
+    public String base = "";
+    public String ext = "";
+    public String name = "";
+
     // The platform-specific path delimiter, ; or ':'.
     //
     // An example on *nix:
@@ -116,15 +122,21 @@ public class Path {
         return p.substring(p.lastIndexOf('.'));
     }
 
-    // Returns a path string from an object. This is the opposite of path.parse.
+    // Returns a path string from an object. This is the opposite of Path.parse.
     //
-    // If pathObject has dir and base properties, the returned string will be a concatenation of the dir property, the platform-dependent path separator, and the base property.
+    // If Path Object has dir and base properties, the returned string will be a concatenation 
+    // of the dir property, the platform-dependent path separator, and the base property.
     //
-    // If the dir property is not supplied, the root property will be used as the dir property. However, it will be assumed that the root property already ends with the platform-dependent path separator. In this case, the returned string will be the concatenation fo the root property and the base property.
+    // If the dir property is not supplied, the root property will be used as the dir property. 
+    // However, it will be assumed that the root property already ends with the platform-dependent 
+    // path separator. In this case, the returned string will be the concatenation of the root 
+    // property and the base property.
     //
-    // If both the dir and the root properties are not supplied, then the returned string will be the contents of the base property.
+    // If both the dir and the root properties are not supplied, then the returned string will 
+    // be the contents of the base property.
     //
-    // If the base property is not supplied, a concatenation of the name property and the ext property will be used as the base property.
+    // If the base property is not supplied, a concatenation of the name property and the ext 
+    // property will be used as the base property.
     //
     // Example:
     //
@@ -147,8 +159,17 @@ public class Path {
     // })
     // // returns '/file.txt'
     // ```
-    public static String format() {
-        return "";
+    public String toString() {
+        if (!this.dir.isEmpty() && !this.base.isEmpty()) {
+            return this.join(this.dir, this.base);
+        }
+        if (!this.root.isEmpty() && !this.base.isEmpty()) {
+            return this.join(this.root, this.base);
+        }
+        if (!this.base.isEmpty()) {
+            return this.base;
+        }
+        return this.name + this.ext;
     }
 
     // Determines whether path is an absolute path. An absolute path will always resolve to the same location, regardless of the working directory.
@@ -221,6 +242,7 @@ public class Path {
     // Returns an object from a path string.
     //
     // An example on *nix:
+    //
     // ```java
     // path.parse('/home/user/dir/file.txt')
     // // returns
@@ -232,8 +254,16 @@ public class Path {
     // //    name : "file"
     // // }
     // ```
-    public static String parse(String p) {
-        return "";
+    public static Path parse(String p) {
+        Path path = new Path();
+        if (Path.sep.equals(String.valueOf(p.charAt(0)))) {
+            path.root = Path.sep;
+        }
+        path.dir = path.dirname(p);
+        path.base = path.basename(p);
+        path.ext = path.extname(p);
+        path.name = path.basename(p, path.ext);
+        return path;
     }
 
     // Solve the relative path from from to to.

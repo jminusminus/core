@@ -61,8 +61,63 @@ public class Path_test extends Test {
     }
 
     public void test_extname_with_start_ext() {
-        this.should("returns the extname with no ext");
+        this.should("returns the extname with a start ext");
         this.assertEqual("", Path.extname(".index"));
+    }
+
+    public void test_toString_full() {
+        this.should("returns a string path from a full Path object");
+        Path path = new Path();
+        path.root = "/";
+        path.dir = "/home/user/dir";
+        path.base = "file.txt";
+        path.ext = ".txt";
+        path.name = "file";
+        this.assertEqual("/home/user/dir/file.txt", path.toString());
+    }
+
+    public void test_toString_dir_base() {
+        this.should("returns a string path from the dir and path");
+        Path path = new Path();
+        path.root = "";
+        path.dir = "/home/user/dir";
+        path.base = "file.txt";
+        path.ext = "";
+        path.name = "";
+        this.assertEqual("/home/user/dir/file.txt", path.toString());
+    }
+
+    public void test_toString_root_base() {
+        this.should("returns a string path from the root and base");
+        Path path = new Path();
+        path.root = "/";
+        path.dir = "";
+        path.base = "file.txt";
+        path.ext = "";
+        path.name = "";
+        this.assertEqual("/file.txt", path.toString());
+    }
+
+    public void test_toString_base() {
+        this.should("returns a string path from the base");
+        Path path = new Path();
+        path.root = "";
+        path.dir = "";
+        path.base = "file.txt";
+        path.ext = "";
+        path.name = "";
+        this.assertEqual("file.txt", path.toString());
+    }
+
+    public void test_toString_name_ext() {
+        this.should("returns a string path from the anme and ext");
+        Path path = new Path();
+        path.root = "";
+        path.dir = "";
+        path.base = "";
+        path.ext = ".txt";
+        path.name = "file";
+        this.assertEqual("file.txt", path.toString());
     }
 
     public void test_isAbsolute_true() {
@@ -117,6 +172,16 @@ public class Path_test extends Test {
         this.should("return an absolute normalized path with last ..");
         String path = Path.normalize("/foo/bar//baz/asdf/quux/..");
         this.assertEqual("/foo/bar/baz/asdf", path);
+    }
+
+    public void test_parse() {
+        this.should("returns a Path object from the string");
+        Path path = Path.parse("/home/user/dir/file.txt");
+        this.assertEqual("/", path.root);
+        this.assertEqual("/home/user/dir", path.dir);
+        this.assertEqual("file.txt", path.base);
+        this.assertEqual(".txt", path.ext);
+        this.assertEqual("file", path.name);
     }
 
     public void test_relative() {
