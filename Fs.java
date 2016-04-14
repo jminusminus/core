@@ -243,7 +243,13 @@ public class Fs {
 
     // Synchronous truncate(2). No arguments other than a possible exception are given to the completion callback. A file descriptor can also be passed as the first argument. In this case, fs.ftruncate() is called.
     public static boolean truncate(String path, int len) {
-        return false;
+        try {
+            java.nio.file.Files.write(java.nio.file.Paths.get(path), new byte[len], java.nio.file.StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
     }
 
     // Synchronous unlink(2). No arguments other than a possible exception are given to the completion callback.
@@ -276,7 +282,7 @@ public class Fs {
     // 
     // If the value is a numberable string like '123456789', the value would get converted to corresponding number.
     // If the value is NaN or Infinity, the value would get converted to Date.now().
-    public static boolean utimes(String path, int atime, int mtime) {
+    public static boolean utimes(String path, long atime, long mtime) {
         return false;
     }
 
@@ -382,6 +388,22 @@ public class Fs {
     // Note that it is unsafe to use fs.writeFile multiple times on the same file without waiting for the callback. For this scenario, fs.createWriteStream is strongly recommended.
     public static int write(String fd, byte[] data, int position, String encoding) {
         return 0;
+    }
+
+    // Write data to a file, creating the file if it does 
+    // not yet exist. Data can be a string or byte array.
+    //
+    // Example:
+    //
+    //     Fs.writeFile("message.txt", "data to append".getBytes());
+    public static boolean writeFile(String file, byte[] data) {
+        try {
+            java.nio.file.Files.write(java.nio.file.Paths.get(file), data, java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
     }
 
     // Check if the current user can access the given file with the given mode.

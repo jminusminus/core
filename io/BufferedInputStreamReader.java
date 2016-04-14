@@ -14,7 +14,7 @@ public class BufferedInputStreamReader extends java.io.InputStream {
     protected int cursor;
     protected int end;
     protected int marker = -1;
-    protected int bufferSize = 100000;
+    protected int bufferSize = 10000;
 
     public BufferedInputStreamReader(String stream) {
         this.stream = new InputStreamMock(stream.getBytes());
