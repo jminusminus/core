@@ -251,16 +251,6 @@ public class Path_test extends Test {
         this.assertEqual(Path.resolve(from, Path.relative(from, to)), Path.resolve(to));
     }
 
-    public void test_resolve_relative() {
-        this.should("returns the relative path for the current directory");
-        this.assertEqual("../../etc", Path.resolve("./foo/bar", "/etc"));
-    }
-
-    public void test_resolve_absolute_second() {
-        this.should("returns a relative path gogin to root and down");
-        this.assertEqual("../../tmp/file", Path.resolve("/foo/bar", "/tmp/file/"));
-    }
-
     public void test_resolve_cwd() {
         this.should("returns a relative path from the cwd");
         this.assertEqual(System.getProperty("user.dir") + "/wwwroot/static_files/gif/image.gif", Path.resolve("wwwroot", "static_files/png/", "../gif/image.gif"));
