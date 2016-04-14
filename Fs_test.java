@@ -163,6 +163,24 @@ public class Fs_test extends Test {
         Fs.unlink(this.tmp);
     }
 
+    public void test_appendFile_string() {
+        this.should("create a new file and write the string to it");
+        this.assertEqual(true, Fs.appendFile(this.tmp, "test"));
+        Fs.unlink(this.tmp);
+    }
+
+    public void test_appendFile_string_encoding() {
+        this.should("create a new file and write the string as utf8");
+        this.assertEqual(true, Fs.appendFile(this.tmp, "test", "utf8"));
+        Fs.unlink(this.tmp);
+    }
+
+    public void test_appendFile_string_bad_encoding() {
+        this.should("create a new file and write the string as utf8");
+        this.assertEqual(false, Fs.appendFile(this.tmp, "test", "xxx"));
+        Fs.unlink(this.tmp);
+    }
+
     public void test_appendFile_dev_null() {
         this.should("return false as file cannot be created");
         this.assertEqual(false, Fs.appendFile("/dev/null/foo", "test".getBytes()));

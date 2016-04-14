@@ -9,18 +9,16 @@ package github.com.jminusminus.core;
 
 public class Fs {
 
-    // File is visible to the calling process.
-    // This is useful for determining if a file exists, but says nothing about rwx 
-    // permissions. Default if no mode is specified.
+    // File is visible.
     public static final int F_OK = 0000;
 
-    // File can be read by the calling process.
+    // File can be read.
     public static final int R_OK = 0444;
 
-    // File can be written by the calling process.
+    // File can be written.
     public static final int W_OK = 0222;
 
-    // File can be executed by the calling process. This has no effect on Windows (will behave like fs.F_OK).
+    // File can be executed.
     public static final int X_OK = 0111;
 
     public static boolean access(String path) {
@@ -35,21 +33,47 @@ public class Fs {
     // * Fs.F_OK - File is visible to the calling process. This is useful for determining if a file exists, but says nothing about rwx permissions. Default if no mode is specified.
     // * Fs.R_OK - File can be read by the calling process.
     // * Fs.W_OK - File can be written by the calling process.
-    // * Fs.X_OK - File can be executed by the calling process. This has no effect on Windows (will behave like fs.F_OK).
+    // * Fs.X_OK - File can be executed by the calling process.
+    // 
+    // If any of the accessibility checks fail, false will be returned. 
+    // The following example checks if the file /tmp/foo.txt can be read and written by the current process.
     //
-    // The final argument, callback, is a callback function that is invoked with a possible error argument. 
-    // If any of the accessibility checks fail, the error argument will be populated. 
-    // The following example checks if the file /etc/passwd can be read and written by the current process.
+    // Example:
+    // 
+    // ```java
+    // boolean b = Fs.access("/tmp/foo.txt", Fs.R_OK | Fs.W_OK);
+    // ```
+    // Returns true on success and false on failure.
     public static boolean access(String path, int mode) {
         return Fs.accessFile(java.nio.file.Paths.get(path), mode);
     }
 
-    // Append data to a file, creating the file if it does 
-    // not yet exist. Data can be a string or byte array.
+    public static boolean appendFile(String file, String data) {
+        return Fs.appendFile(file, data, "utf8");
+    }
+
+    public static boolean appendFile(String file, String data, String encoding) {
+        try {
+            return Fs.appendFile(file, data.getBytes(encoding));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    // Append data to a file, creating the file if it does not yet exist. Data can be a string or byte array.
     //
     // Example:
     //
-    //     Fs.appendFile("message.txt", "data to append".getBytes());
+    // ```java
+    // boolean b = Fs.appendFile("/tmp/foo.txt", "data to append".getBytes());
+    //
+    // boolean b = Fs.appendFile("/tmp/foo.txt", "data to append", "utf8");
+    //
+    // boolean b = Fs.appendFile("/tmp/foo.txt", "data to append");
+    // // defaults to utf8
+    // ```
+    // Returns true on success and false on failure.
     public static boolean appendFile(String file, byte[] data) {
         try {
             java.nio.file.Files.write(java.nio.file.Paths.get(file), data, java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
@@ -60,12 +84,26 @@ public class Fs {
         return true;
     }
 
-    // Change the mode of the given path to the given mode.
+    // Change the permissions for the file specified by path.
+    //
+    // Example:
+    //
+    // ```java
+    // boolean b = Fs.chmod("/tmp/foo.txt", Fs.R_OK | Fs.W_OK);
+    // ```
+    // Returns true on success and false on failure.
     public static boolean chmod(String path, int mode) {
         return Fs.chmodFile(new java.io.File(path), mode);
     }
 
-    // Synchronous chown(2). No arguments other than a possible exception are given to the completion callback.
+    // Change the owner of the file specified by path.
+    //
+    // Example:
+    //
+    // ```java
+    // boolean b = Fs.chown("/tmp/foo.txt", "nobody");
+    // ```
+    // Returns true on success and false on failure.
     public static boolean chown(String path, String uid) {
         try {
             java.nio.file.Path p = java.nio.file.Paths.get(path);
@@ -84,7 +122,17 @@ public class Fs {
         return Fs.mkdir(path, 0777);
     }
 
-    // Synchronous mkdir(2). No arguments other than a possible exception are given to the completion callback. mode defaults to 0o777.
+    // Create a directory at the specified path.
+    // Default mode is 0777.
+    //
+    // Example:
+    //
+    // ```java
+    // boolean b = Fs.mkdir("/tmp/foo");
+    //
+    // boolean b = Fs.mkdir("/tmp/foo", Fs.R_OK | Fs.W_OK | Fs.X_OK);
+    // ```
+    // Returns true on success and false on failure.
     public static boolean mkdir(String path, int mode) {
         try {
             java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path));
@@ -99,7 +147,17 @@ public class Fs {
         return Fs.mkdirs(path, 0777);
     }
 
-    // Recursive mkdir.
+    // Recursively create directories to the specified path.
+    // Default mode is 0777.
+    //
+    // Example:
+    //
+    // ```java
+    // boolean b = Fs.mkdirs("/tmp/foo/bar");
+    //
+    // boolean b = Fs.mkdirs("/tmp/foo/bar", Fs.R_OK | Fs.W_OK | Fs.X_OK);
+    // ```
+    // Returns true on success and false on failure.
     public static boolean mkdirs(String path, int mode) {
         try {
             java.nio.file.Files.createDirectories(java.nio.file.Paths.get(path));
@@ -110,9 +168,15 @@ public class Fs {
         return true;
     }
 
-    // Synchronous readdir(3). Reads the contents of a directory.
-    // Returns an array of the names of the files in the directory excluding '.' and '..'.
-    // If there was an error null is returned.
+    // Reads the contents of a directory at the specified path and returns an array of the names 
+    // of the files in the directory excluding '.' and '..'.
+    // 
+    // Example:
+    //
+    // ```java
+    // String[] files = Fs.readdir("/tmp");
+    // ```
+    // If there is an error null is returned.
     public static String[] readdir(String path) {
         java.io.File folder = new java.io.File(path);
         java.io.File[] listOfFiles = folder.listFiles();
@@ -126,9 +190,14 @@ public class Fs {
         return files;
     }
 
-    // Synchronously reads the entire contents of a file. Example:
+    // Reads the entire contents of the specified file into a byte array.
     // 
-    //     Fs.readFile('/etc/passwd');
+    // Example:
+    //
+    // ```java
+    // byte[] f = Fs.readFile("/tmp/foo.txt");
+    // ```
+    // If there is an error null is returned.
     public static byte[] readFile(String file) {
         try {
             return java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file));
@@ -138,7 +207,14 @@ public class Fs {
         }
     }
 
-    // Synchronous rename(2). No arguments other than a possible exception are given to the completion callback.
+    // Rename the specified path.
+    // 
+    // Example:
+    //
+    // ```java
+    // boolean b = Fs.rename("/tmp/foo.txt", "/tmp/bar.txt");
+    // ```
+    // Returns true on success and false on failure.
     public static boolean rename(String oldPath, String newPath) {
         try {
             java.nio.file.Files.move(java.nio.file.Paths.get(oldPath), java.nio.file.Paths.get(newPath));
@@ -149,12 +225,26 @@ public class Fs {
         return true;
     }
 
-    // Synchronous rmdir(2). No arguments other than a possible exception are given to the completion callback.
+    // Remove the specified directory. The directory must be empty of all files and sub directories.
+    // 
+    // Example:
+    //
+    // ```java
+    // boolean b = Fs.rmdir("/tmp/foo");
+    // ```
+    // Returns true on success and false on failure.
     public static boolean rmdir(String path) {
         return Fs.unlink(path);
     }
 
-    // Synchronous stat(2). The callback gets two arguments (err, stats) where stats is a fs.Stats object. See the fs.Stats section for more information.
+    // Returns the file status of specified path.
+    // 
+    // Example:
+    //
+    // ```java
+    // Fs.Stat s = Fs.stat("/tmp/foo.txt");
+    // ```
+    // If there is an error null is returned.
     public static Stat stat(String path) {
         java.nio.file.attribute.BasicFileAttributes attrs;
         try {
