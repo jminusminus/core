@@ -142,6 +142,11 @@ public class Fs_test extends Test {
         Fs.unlink(this.tmp);
     }
 
+    public void test_appendFile_dev_null() {
+        this.should("return false as file cannot be created");
+        this.assertEqual(false, Fs.appendFile("/dev/null/foo", "test".getBytes()));
+    }
+
     public void test_unlink() {
         this.should("create a file and then unlink it");
         Fs.appendFile(this.tmp, "test".getBytes());
@@ -173,19 +178,47 @@ public class Fs_test extends Test {
         this.assertEqual("read", new String(b));
     }
 
+    public void test_readFile_null() {
+        this.should("return the content of the file");
+        this.assertEqual(true, Fs.readFile("/dev/null/foo") == null);
+    }
+
+    public void test_writeFile() {
+        this.should("return true after the file is written");
+        Fs.chmod("./fixtures/filesystem/write.txt", Fs.R_OK | Fs.W_OK);
+        this.assertEqual(true, Fs.writeFile("./fixtures/filesystem/write.txt", "write foo".getBytes()));
+        byte[] b = Fs.readFile("./fixtures/filesystem/write.txt");
+        this.assertEqual("write foo", new String(b));
+    }
+
+    public void test_writeFile_null() {
+        this.should("return false as the file content be written");
+        this.assertEqual(false, Fs.writeFile("/dev/null/foo", "write foo".getBytes()));
+    }
+
     public void test_mkdir() {
         this.should("create the directory");
         boolean b = Fs.mkdir("./fixtures/filesystem/newDir");
         this.assertEqual(true, b);
-        Fs.unlink("./fixtures/filesystem/newDir");
+        Fs.rmdir("./fixtures/filesystem/newDir");
+    }
+
+    public void test_mkdir_null() {
+        this.should("return false as the directory cannot be made");
+        this.assertEqual(false, Fs.mkdir("/dev/null/foo"));
     }
 
     public void test_mkdirs() {
         this.should("create the directories");
         boolean b = Fs.mkdirs("./fixtures/filesystem/newDir/newSubDir");
         this.assertEqual(true, b);
-        Fs.unlink("./fixtures/filesystem/newDir/newSubDir");
-        Fs.unlink("./fixtures/filesystem/newDir");
+        Fs.rmdir("./fixtures/filesystem/newDir/newSubDir");
+        Fs.rmdir("./fixtures/filesystem/newDir");
+    }
+
+    public void test_mkdirs_null() {
+        this.should("return false as the directories cannot be made");
+        this.assertEqual(false, Fs.mkdirs("/dev/null/foo/bar"));
     }
 
     public void test_truncate() {
@@ -195,5 +228,15 @@ public class Fs_test extends Test {
         Fs.truncate("./fixtures/filesystem/truncate.txt", 10);
         this.assertEqual((long)10, Fs.stat("./fixtures/filesystem/truncate.txt").size);
         Fs.unlink("./fixtures/filesystem/truncate.txt");
+    }
+
+    public void test_truncate_null() {
+        this.should("return false as truncate cannot be called");
+        this.assertEqual(false, Fs.truncate("/dev/null/foo", 5));
+    }
+
+    public void test_stat_null() {
+        this.should("return false as stat cannot be called");
+        this.assertEqual(true, Fs.stat("/dev/null/foo") == null);
     }
 }
