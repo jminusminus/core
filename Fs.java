@@ -27,7 +27,7 @@ public class Fs {
     // If any of the accessibility checks fail, the error argument will be populated. 
     // The following example checks if the file /etc/passwd can be read and written by the current process.
     public static boolean access(String path, int mode) {
-        return Fs.accessFile(new java.io.File(path), mode);
+        return Fs.accessFile(java.nio.file.Paths.get(path), mode);
     }
 
     // Append data to a file, creating the file if it does 
@@ -50,8 +50,6 @@ public class Fs {
     public static boolean chmod(String path, int mode) {
         return Fs.chmodFile(new java.io.File(path), mode);
     }
-
-
 
     // Synchronous chown(2). No arguments other than a possible exception are given to the completion callback.
     public static boolean chown(String path, String uid, String gid) {
@@ -98,28 +96,6 @@ public class Fs {
         return false;
     }
 
-    // Synchronous lchmod(2). No arguments other than a possible exception are given to the completion callback.
-    // 
-    // Only available on Mac OS X.
-    public static boolean lchmod(String path, String mode) {
-        return false;
-    }
-
-    // Synchronous lchown(2). No arguments other than a possible exception are given to the completion callback.
-    public static boolean lchown(String path, String uid, String gid) {
-        return false;
-    }
-
-    // Synchronous link(2). No arguments other than a possible exception are given to the completion callback.
-    public static boolean link(String srcpath, String dstpath) {
-        return false;
-    }
-
-    // Synchronous lstat(2). The callback gets two arguments (err, stats) where stats is a fs.Stats object. lstat() is identical to stat(), except that if path is a symbolic link, then the link itself is stat-ed, not the file that it refers to.
-    public static String lstat(String path) {
-        return "";
-    }
-
     public static boolean mkdir(String path) {
         return Fs.mkdir(path, 0777);
     }
@@ -133,7 +109,7 @@ public class Fs {
         return Fs.mkdirs(path, 0777);
     }
 
-    // Recusive mkdir
+    // Recursive mkdir.
     public static boolean mkdirs(String path, int mode) {
         return (new java.io.File(path)).mkdirs();
     }
@@ -234,19 +210,14 @@ public class Fs {
         return new byte[0];
     }
 
-    // Synchronous readlink(2). The callback gets two arguments (err, linkString).
-    public static String readlink(String path) {
-        return "";
-    }
-
     // Synchronous rename(2). No arguments other than a possible exception are given to the completion callback.
     public static boolean rename(String oldPath, String newPath) {
-        return false;
+        return (new java.io.File(oldPath)).renameTo(new java.io.File(newPath));
     }
 
     // Synchronous rmdir(2). No arguments other than a possible exception are given to the completion callback.
     public static boolean rmdir(String path) {
-        return false;
+        return Fs.unlink(path);
     }
 
     // Synchronous stat(2). The callback gets two arguments (err, stats) where stats is a fs.Stats object. See the fs.Stats section for more information.
@@ -268,16 +239,6 @@ public class Fs {
         stat.modify = attrs.lastModifiedTime().toMillis();
         stat.create = attrs.creationTime().toMillis();
         return stat;
-    }
-
-    // Synchronous symlink(2). No arguments other than a possible exception are given to the completion callback. The type argument can be set to 'dir', 'file', or 'junction' (default is 'file') and is only available on Windows (ignored on other platforms). Note that Windows junction points require the destination path to be absolute. When using 'junction', the target argument will automatically be normalized to absolute path.
-    // 
-    // Here is an example below:
-    // 
-    // fs.symlink('./foo', './new-port');
-    // It creates a symbolic link named "new-port" that points to "foo".
-    public static boolean symlink(String target, String path, String type) {
-        return false;
     }
 
     // Synchronous truncate(2). No arguments other than a possible exception are given to the completion callback. A file descriptor can also be passed as the first argument. In this case, fs.ftruncate() is called.
@@ -424,31 +385,31 @@ public class Fs {
     }
 
     // Check if the current user can access the given file with the given mode.
-    protected static boolean accessFile(java.io.File f, int mode) {
+    protected static boolean accessFile(java.nio.file.Path p, int mode) {
         switch (mode) {
             case 0000:
-                return f.exists();
+                return java.nio.file.Files.exists(p);
             case 0111:
-                return f.canExecute();
+                return java.nio.file.Files.isExecutable(p);
             case 0222:
-                return f.canWrite();
+                return java.nio.file.Files.isWritable(p);
             case 0333:
-                return f.canWrite() && f.canExecute();
+                return java.nio.file.Files.isWritable(p) && java.nio.file.Files.isExecutable(p);
             case 0444:
-                return f.canRead();
+                return java.nio.file.Files.isReadable(p);
         }
-        return Fs.accessFileReadWriteExecute(f, mode);
+        return Fs.accessFileReadWriteExecute(p, mode);
     }
 
     // Carry on from Fs.access() for complexity break down.
-    protected static boolean accessFileReadWriteExecute(java.io.File f, int mode) {
+    protected static boolean accessFileReadWriteExecute(java.nio.file.Path p, int mode) {
         switch (mode) {
             case 0555:
-                return f.canRead() && f.canExecute();
+                return java.nio.file.Files.isReadable(p) && java.nio.file.Files.isExecutable(p);
             case 0666:
-                return f.canRead() && f.canWrite();
+                return java.nio.file.Files.isReadable(p) && java.nio.file.Files.isWritable(p);
             case 0777:
-                return f.canRead() && f.canWrite() && f.canExecute();
+                return java.nio.file.Files.isReadable(p) && java.nio.file.Files.isWritable(p) && java.nio.file.Files.isExecutable(p);
         }
         return false;
     }
