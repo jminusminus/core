@@ -90,26 +90,16 @@ public class Fs {
         return files;
     }
 
-    // file <String> filename
-    // options <Object> | <String>
-    // encoding <String> | <Null> default = null
-    // flag <String> default = 'r'
-    // callback <Function>
-    // Asynchronously reads the entire contents of a file. Example:
+    // Synchronously reads the entire contents of a file. Example:
     // 
-    // fs.readFile('/etc/passwd', (err, data) => {
-    //   if (err) throw err;
-    //   console.log(data);
-    // });
-    // The callback is passed two arguments (err, data), where data is the contents of the file.
-    // 
-    // If no encoding is specified, then the raw buffer is returned.
-    // 
-    // If options is a string, then it specifies the encoding. Example:
-    // 
-    // fs.readFile('/etc/passwd', 'utf8', callback);
-    public static byte[] readFile(String file, String encoding) {
-        return new byte[0];
+    //     Fs.readFile('/etc/passwd');
+    public static byte[] readFile(String file) {
+        try {
+            return java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
     }
 
     // Synchronous rename(2). No arguments other than a possible exception are given to the completion callback.

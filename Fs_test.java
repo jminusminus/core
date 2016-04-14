@@ -152,4 +152,10 @@ public class Fs_test extends Test {
         this.assertEqual(true, s.dir);
         this.assertEqual(false, s.file);
     }
+
+    public void test_readFile() {
+        this.should("return the content of the file");
+        byte[] b = Fs.readFile("./fixtures/filesystem/read.txt");
+        this.assertEqual("read", new String(b));
+    }
 }
