@@ -44,6 +44,11 @@ public class Writable {
     }
 
     //
+    public boolean write(String str) {
+        return this.write(str, "utf8");
+    }
+
+    //
     public boolean write(String str, String encoding) {
         try {
             return this.write(str.getBytes(encoding));
