@@ -37,6 +37,7 @@ public class Fs_test extends Test {
 
     public void test_access_exists_true() {
         this.should("return true as the file exists");
+        Fs.chmod("./fixtures/filesystem/exists.txt", Fs.F_OK);
         this.assertEqual(true, Fs.access("./fixtures/filesystem/exists.txt"));
     }
 
@@ -47,72 +48,85 @@ public class Fs_test extends Test {
 
     public void test_access_execute_true() {
         this.should("return true as the file can execute");
-        this.assertEqual(true, Fs.access("./fixtures/filesystem/execute.txt", 0111));
+        Fs.chmod("./fixtures/filesystem/execute.txt", Fs.X_OK);
+        this.assertEqual(true, Fs.access("./fixtures/filesystem/execute.txt", Fs.X_OK));
     }
 
     public void test_access_execute_false() {
         this.should("return false as the file cannot execute");
-        this.assertEqual(false, Fs.access("./fixtures/filesystem/read.txt", 0111));
+        Fs.chmod("./fixtures/filesystem/read.txt", Fs.R_OK);
+        this.assertEqual(false, Fs.access("./fixtures/filesystem/read.txt", Fs.X_OK));
     }
 
     public void test_access_write_true() {
         this.should("return true as the file can be written");
-        this.assertEqual(true, Fs.access("./fixtures/filesystem/write.txt", 0222));
+        Fs.chmod("./fixtures/filesystem/write.txt", Fs.W_OK);
+        this.assertEqual(true, Fs.access("./fixtures/filesystem/write.txt", Fs.W_OK));
     }
 
     public void test_access_write_false() {
         this.should("return false as the file cannot be written");
-        this.assertEqual(false, Fs.access("./fixtures/filesystem/execute.txt", 0222));
+        Fs.chmod("./fixtures/filesystem/execute.txt", Fs.X_OK);
+        this.assertEqual(false, Fs.access("./fixtures/filesystem/execute.txt", Fs.W_OK));
     }
 
     public void test_access_write_execute_true() {
         this.should("return true as the file can be read and executed");
-        this.assertEqual(true, Fs.access("./fixtures/filesystem/write_execute.txt", 0333));
+        Fs.chmod("./fixtures/filesystem/write_execute.txt", Fs.W_OK | Fs.X_OK);
+        this.assertEqual(true, Fs.access("./fixtures/filesystem/write_execute.txt", Fs.W_OK | Fs.X_OK));
     }
 
     public void test_access_write_execute_false() {
         this.should("return false as the file cannot be read and executed");
-        this.assertEqual(false, Fs.access("./fixtures/filesystem/write.txt", 0333));
+        Fs.chmod("./fixtures/filesystem/write.txt", Fs.W_OK);
+        this.assertEqual(false, Fs.access("./fixtures/filesystem/write.txt", Fs.W_OK | Fs.X_OK));
     }
 
     public void test_access_read_true() {
         this.should("return true as the file can be read");
-        this.assertEqual(true, Fs.access("./fixtures/filesystem/read.txt", 0444));
+        Fs.chmod("./fixtures/filesystem/read.txt", Fs.R_OK);
+        this.assertEqual(true, Fs.access("./fixtures/filesystem/read.txt", Fs.R_OK));
     }
 
     public void test_access_read_false() {
         this.should("return false as the file cannot be read");
-        this.assertEqual(false, Fs.access("./fixtures/filesystem/no.txt", 0444));
+        this.assertEqual(false, Fs.access("./fixtures/filesystem/no.txt", Fs.R_OK));
     }
 
     public void test_access_read_execute_true() {
         this.should("return true as the file can be read and executed");
-        this.assertEqual(true, Fs.access("./fixtures/filesystem/read_execute.txt", 0555));
+        Fs.chmod("./fixtures/filesystem/read_execute.txt", Fs.R_OK | Fs.X_OK);
+        this.assertEqual(true, Fs.access("./fixtures/filesystem/read_execute.txt", Fs.R_OK | Fs.X_OK));
     }
 
     public void test_access_read_execute_false() {
         this.should("return false as the file cannot be read and executed");
-        this.assertEqual(false, Fs.access("./fixtures/filesystem/read_write.txt", 0555));
+        Fs.chmod("./fixtures/filesystem/read_write.txt", Fs.R_OK | Fs.W_OK);
+        this.assertEqual(false, Fs.access("./fixtures/filesystem/read_write.txt", Fs.R_OK | Fs.X_OK));
     }
 
     public void test_access_read_write_true() {
         this.should("return true as the file can be read and written");
-        this.assertEqual(true, Fs.access("./fixtures/filesystem/read_write.txt", 0666));
+        Fs.chmod("./fixtures/filesystem/read_write.txt", Fs.R_OK | Fs.W_OK);
+        this.assertEqual(true, Fs.access("./fixtures/filesystem/read_write.txt", Fs.R_OK | Fs.W_OK));
     }
 
     public void test_access_read_write_false() {
         this.should("return false as the file cannot be read and written");
-        this.assertEqual(false, Fs.access("./fixtures/filesystem/read_execute.txt", 0666));
+        Fs.chmod("./fixtures/filesystem/read_execute.txt", Fs.R_OK | Fs.X_OK);
+        this.assertEqual(false, Fs.access("./fixtures/filesystem/read_execute.txt", Fs.R_OK | Fs.W_OK));
     }
 
     public void test_access_read_write_execute_true() {
         this.should("return true as the file can be read, written and executed");
-        this.assertEqual(true, Fs.access("./fixtures/filesystem/read_write_execute.txt", 0777));
+        Fs.chmod("./fixtures/filesystem/read_write_execute.txt", Fs.R_OK | Fs.W_OK | Fs.X_OK);
+        this.assertEqual(true, Fs.access("./fixtures/filesystem/read_write_execute.txt", Fs.R_OK | Fs.W_OK | Fs.X_OK));
     }
 
     public void test_access_read_write_execute_false() {
         this.should("return false as the file cannot be read, written and executed");
-        this.assertEqual(false, Fs.access("./fixtures/filesystem/read_write.txt", 0777));
+        Fs.chmod("./fixtures/filesystem/read_write.txt", Fs.R_OK | Fs.W_OK);
+        this.assertEqual(false, Fs.access("./fixtures/filesystem/read_write.txt", Fs.R_OK | Fs.W_OK | Fs.X_OK));
     }
 
     public void test_appendFile_new() {

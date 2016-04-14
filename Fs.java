@@ -9,8 +9,22 @@ package github.com.jminusminus.core;
 
 public class Fs {
 
+    // File is visible to the calling process.
+    // This is useful for determining if a file exists, but says nothing about rwx 
+    // permissions. Default if no mode is specified.
+    public static final int F_OK = 0000;
+
+    // File can be read by the calling process.
+    public static final int R_OK = 0444;
+
+    // File can be written by the calling process.
+    public static final int W_OK = 0222;
+
+    // File can be executed by the calling process. This has no effect on Windows (will behave like fs.F_OK).
+    public static final int X_OK = 0111;
+
     public static boolean access(String path) {
-        return Fs.access(path, 0000);
+        return Fs.access(path, Fs.F_OK);
     }
 
     // Tests a user's permissions for the file specified by path. 
@@ -18,10 +32,10 @@ public class Fs {
     // The following constants define the possible values of mode. 
     // It is possible to create a mask consisting of the bitwise OR of two or more values.
     //
-    // * 0000 - File is visible to the calling process. This is useful for determining if a file exists, but says nothing about rwx permissions. Default if no mode is specified.
-    // * 0444 - File can be read by the calling process.
-    // * 0222 - File can be written by the calling process.
-    // * 0111 - File can be executed by the calling process. This has no effect on Windows (will behave like fs.F_OK).
+    // * Fs.F_OK - File is visible to the calling process. This is useful for determining if a file exists, but says nothing about rwx permissions. Default if no mode is specified.
+    // * Fs.R_OK - File can be read by the calling process.
+    // * Fs.W_OK - File can be written by the calling process.
+    // * Fs.X_OK - File can be executed by the calling process. This has no effect on Windows (will behave like fs.F_OK).
     //
     // The final argument, callback, is a callback function that is invoked with a possible error argument. 
     // If any of the accessibility checks fail, the error argument will be populated. 
@@ -64,11 +78,11 @@ public class Fs {
     public static boolean mkdir(String path, int mode) {
         try {
             java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path));
-            return true;
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-        return false;
+        return true;
     }
 
     public static boolean mkdirs(String path) {
@@ -79,11 +93,11 @@ public class Fs {
     public static boolean mkdirs(String path, int mode) {
         try {
             java.nio.file.Files.createDirectories(java.nio.file.Paths.get(path));
-            return true;
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-        return false;
+        return true;
     }
 
     // Synchronous readdir(3). Reads the contents of a directory.
@@ -110,13 +124,19 @@ public class Fs {
             return java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file));
         } catch (Exception e) {
             System.out.println(e);
+            return null;
         }
-        return null;
     }
 
     // Synchronous rename(2). No arguments other than a possible exception are given to the completion callback.
     public static boolean rename(String oldPath, String newPath) {
-        return (new java.io.File(oldPath)).renameTo(new java.io.File(newPath));
+        try {
+            java.nio.file.Files.move(java.nio.file.Paths.get(oldPath), java.nio.file.Paths.get(newPath));
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
     }
 
     // Synchronous rmdir(2). No arguments other than a possible exception are given to the completion callback.
@@ -167,16 +187,6 @@ public class Fs {
         return true;
     }
 
-    protected static boolean unlink(java.io.File f) {
-        try {
-            f.delete();
-        } catch (Exception e) {
-            System.out.println(e);
-            return false;
-        }
-        return true;
-    }
-
     // Stop watching for changes on filename. If listener is specified, only that particular listener is removed. Otherwise, all listeners are removed and you have effectively stopped watching filename.
     // 
     // Calling fs.unwatchFile() with a filename that is not being watched is a no-op, not an error.
@@ -186,14 +196,15 @@ public class Fs {
         return false;
     }
 
-    // Change file timestamps of the file referenced by the supplied path.
-    // 
-    // Note: the arguments atime and mtime of the following related functions does follow the below rules:
-    // 
-    // If the value is a numberable string like '123456789', the value would get converted to corresponding number.
-    // If the value is NaN or Infinity, the value would get converted to Date.now().
-    public static boolean utimes(String path, long atime, long mtime) {
-        return false;
+    // Change modified file timestamp of the file referenced by the supplied path.
+    public static boolean mtimes(String path, long time) {
+        try {
+            java.nio.file.Files.setLastModifiedTime(java.nio.file.Paths.get(path), java.nio.file.attribute.FileTime.fromMillis(time));
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
     }
 
     // Watch for changes on filename, where filename is either a file or a directory. The returned object is a fs.FSWatcher.
@@ -280,15 +291,15 @@ public class Fs {
     protected static boolean accessFile(java.nio.file.Path p, int mode) {
         switch (mode) {
             case 0000:
-                return java.nio.file.Files.exists(p);
+                return Fs.access0000(p);
             case 0111:
-                return java.nio.file.Files.isExecutable(p);
+                return Fs.access0111(p);
             case 0222:
-                return java.nio.file.Files.isWritable(p);
+                return Fs.access0222(p);
             case 0333:
-                return java.nio.file.Files.isWritable(p) && java.nio.file.Files.isExecutable(p);
+                return Fs.access0333(p);
             case 0444:
-                return java.nio.file.Files.isReadable(p);
+                return Fs.access0444(p);
         }
         return Fs.accessFileReadWriteExecute(p, mode);
     }
@@ -297,13 +308,53 @@ public class Fs {
     protected static boolean accessFileReadWriteExecute(java.nio.file.Path p, int mode) {
         switch (mode) {
             case 0555:
-                return java.nio.file.Files.isReadable(p) && java.nio.file.Files.isExecutable(p);
+                return Fs.access0555(p);
             case 0666:
-                return java.nio.file.Files.isReadable(p) && java.nio.file.Files.isWritable(p);
+                return Fs.access0666(p);
             case 0777:
-                return java.nio.file.Files.isReadable(p) && java.nio.file.Files.isWritable(p) && java.nio.file.Files.isExecutable(p);
+                return Fs.access0777(p);
         }
         return false;
+    }
+
+    // Check if the mode of the given java.nio.file.Path is 0000.
+    protected static boolean access0000(java.nio.file.Path p) {
+        return java.nio.file.Files.exists(p);
+    }
+
+    // Check if the mode of the given java.nio.file.Path is 0111.
+    protected static boolean access0111(java.nio.file.Path p) {
+        return java.nio.file.Files.isExecutable(p);
+    }
+
+    // Check if the mode of the given java.nio.file.Path is 0222.
+    protected static boolean access0222(java.nio.file.Path p) {
+        return java.nio.file.Files.isWritable(p);
+    }
+
+    // Check if the mode of the given java.nio.file.Path is 0333.
+    protected static boolean access0333(java.nio.file.Path p) {
+        return java.nio.file.Files.isWritable(p) && java.nio.file.Files.isExecutable(p);
+    }
+
+    // Check if the mode of the given java.nio.file.Path is 0444.
+    protected static boolean access0444(java.nio.file.Path p) {
+        return java.nio.file.Files.isReadable(p);
+    }
+
+    // Check if the mode of the given java.nio.file.Path is 0555.
+    protected static boolean access0555(java.nio.file.Path p) {
+        return java.nio.file.Files.isReadable(p) && java.nio.file.Files.isExecutable(p);
+    }
+
+    // Check if the mode of the given java.nio.file.Path is 0666.
+    protected static boolean access0666(java.nio.file.Path p) {
+        return java.nio.file.Files.isReadable(p) && java.nio.file.Files.isWritable(p);
+    }
+
+    // Check if the mode of the given java.nio.file.Path is 0777.
+    protected static boolean access0777(java.nio.file.Path p) {
+        return java.nio.file.Files.isReadable(p) && java.nio.file.Files.isWritable(p) && java.nio.file.Files.isExecutable(p);
     }
 
     // Change the mode of the given java.io.File to the given mode.
