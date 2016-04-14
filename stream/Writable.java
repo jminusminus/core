@@ -29,4 +29,49 @@ public class Writable extends java.io.OutputStream {
             System.out.println(e);
         }
     }
+
+    //
+    public boolean write(String str, String encoding) {
+        try {
+            this.write(str.getBytes(encoding));
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    //
+    public boolean end(String str, String encoding) {
+        try {
+            return this.end(str.getBytes(encoding));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    //
+    public boolean end(byte[] b) {
+        try {
+            this.flush();
+            this.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    // Forces buffering of all writes.
+    //
+    // Buffered data will be flushed either at stream.uncork() or at stream.end() call.
+    public void cork() {
+
+    }
+
+    // Flush all data, buffered since stream.cork() call.
+    public void uncork() {
+        
+    }
 }
