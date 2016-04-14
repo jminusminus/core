@@ -197,17 +197,8 @@ public class Fs {
         return true;
     }
 
-    // Stop watching for changes on filename. If listener is specified, only that particular listener is removed. Otherwise, all listeners are removed and you have effectively stopped watching filename.
-    // 
-    // Calling fs.unwatchFile() with a filename that is not being watched is a no-op, not an error.
-    // 
-    // Note: fs.watch() is more efficient than fs.watchFile() and fs.unwatchFile(). fs.watch() should be used instead of fs.watchFile() and fs.unwatchFile() when possible.
-    public static boolean unwatchFile(String filename, String listener) {
-        return false;
-    }
-
     // Change modified file timestamp of the file referenced by the supplied path.
-    public static boolean mtimes(String path, long time) {
+    public static boolean mtime(String path, long time) {
         try {
             java.nio.file.Files.setLastModifiedTime(java.nio.file.Paths.get(path), java.nio.file.attribute.FileTime.fromMillis(time));
         } catch (Exception e) {
@@ -215,70 +206,6 @@ public class Fs {
             return false;
         }
         return true;
-    }
-
-    // Watch for changes on filename, where filename is either a file or a directory. The returned object is a fs.FSWatcher.
-    // 
-    // The second argument is optional. The options if provided should be an object. The supported boolean members are persistent and recursive. persistent indicates whether the process should continue to run as long as files are being watched. recursive indicates whether all subdirectories should be watched, or only the current directory. This applies when a directory is specified, and only on supported platforms (See Caveats).
-    // 
-    // The default is { persistent: true, recursive: false }.
-    // 
-    // The listener callback gets two arguments (event, filename). event is either 'rename' or 'change', and filename is the name of the file which triggered the event.
-    // 
-    // #### Caveats
-    // 
-    // The fs.watch API is not 100% consistent across platforms, and is unavailable in some situations.
-    // 
-    // The recursive option is only supported on OS X and Windows.
-    //
-    // #### Availability
-    // 
-    // This feature depends on the underlying operating system providing a way to be notified of filesystem changes.
-    // 
-    // On Linux systems, this uses inotify.
-    // On BSD systems, this uses kqueue.
-    // On OS X, this uses kqueue for files and 'FSEvents' for directories.
-    // On SunOS systems (including Solaris and SmartOS), this uses event ports.
-    // On Windows systems, this feature depends on ReadDirectoryChangesW.
-    // If the underlying functionality is not available for some reason, then fs.watch will not be able to function. For example, watching files or directories on network file systems (NFS, SMB, etc.) often doesn't work reliably or at all.
-    // 
-    // You can still use fs.watchFile, which uses stat polling, but it is slower and less reliable.
-    // 
-    // Filename Argument#
-    // 
-    // Providing filename argument in the callback is only supported on Linux and Windows. Even on supported platforms, filename is not always guaranteed to be provided. Therefore, don't assume that filename argument is always provided in the callback, and have some fallback logic if it is null.
-    // 
-    // fs.watch('somedir', (event, filename) => {
-    //   console.log(`event is: ${event}`);
-    //   if (filename) {
-    //     console.log(`filename provided: ${filename}`);
-    //   } else {
-    //     console.log('filename not provided');
-    //   }
-    // });
-    public static boolean watch(String filename, String options, String listener) {
-        return false;
-    }
-
-    // Watch for changes on filename. The callback listener will be called each time the file is accessed.
-    // 
-    // The options argument may be omitted. If provided, it should be an object. The options object may contain a boolean named persistent that indicates whether the process should continue to run as long as files are being watched. The options object may specify an interval property indicating how often the target should be polled in milliseconds. The default is { persistent: true, interval: 5007 }.
-    // 
-    // The listener gets two arguments the current stat object and the previous stat object:
-    // 
-    // fs.watchFile('message.text', (curr, prev) => {
-    //   console.log(`the current mtime is: ${curr.mtime}`);
-    //   console.log(`the previous mtime was: ${prev.mtime}`);
-    // });
-    // These stat objects are instances of fs.Stat.
-    // 
-    // If you want to be notified when the file was modified, not just accessed, you need to compare curr.mtime and prev.mtime.
-    // 
-    // Note: when an fs.watchFile operation results in an ENOENT error, it will invoke the listener once, with all the fields zeroed (or, for dates, the Unix Epoch). In Windows, blksize and blocks fields will be undefined, instead of zero. If the file is created later on, the listener will be called again, with the latest stat objects. This is a change in functionality since v0.10.
-    // 
-    // Note: fs.watch() is more efficient than fs.watchFile and fs.unwatchFile. fs.watch should be used instead of fs.watchFile and fs.unwatchFile when possible.
-    public static boolean watchFile(String filename, String options, String listener) {
-        return false;
     }
 
     // Write data to a file, creating the file if it does 

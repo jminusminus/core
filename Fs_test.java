@@ -35,6 +35,27 @@ public class Fs_test extends Test {
         this.assertEqual(true, files == null);
     }
 
+    public void test_chown_bad_user() {
+        this.should("return false as the chmod user is invalid");
+        Fs.writeFile("./fixtures/filesystem/xchown.txt", "chown".getBytes());
+        this.assertEqual(false, Fs.chown("./fixtures/filesystem/xchown.txt", "xxx"));
+    }
+
+    public void test_chown_bad_bad_file() {
+        this.should("return false as the file doesn't exist");
+        this.assertEqual(false, Fs.chown("/dev/null/foo", "root"));
+    }
+
+    public void test_chmod_bad() {
+        this.should("return false as the chmod is invalid");
+        this.assertEqual(false, Fs.chmod("./fixtures/filesystem/exists.txt", 888));
+    }
+
+    public void test_access_bad() {
+        this.should("return false as the mode is invalid");
+        this.assertEqual(false, Fs.access("./fixtures/filesystem/exists.txt", 888));
+    }
+
     public void test_access_exists_true() {
         this.should("return true as the file exists");
         Fs.chmod("./fixtures/filesystem/exists.txt", Fs.F_OK);
@@ -238,5 +259,33 @@ public class Fs_test extends Test {
     public void test_stat_null() {
         this.should("return false as stat cannot be called");
         this.assertEqual(true, Fs.stat("/dev/null/foo") == null);
+    }
+
+    public void test_rename_same() {
+        this.should("return true as the file renamed it's self");
+        this.assertEqual(true, Fs.rename("./fixtures/filesystem/rename.txt", "./fixtures/filesystem/rename.txt"));
+    }
+
+    public void test_rename_different() {
+        this.should("return true as the file is renamed");
+        this.assertEqual(true, Fs.rename("./fixtures/filesystem/rename.txt", "./fixtures/filesystem/rename1.txt"));
+        this.assertEqual(true, Fs.rename("./fixtures/filesystem/rename1.txt", "./fixtures/filesystem/rename.txt"));
+    }
+
+    public void test_rename_null() {
+        this.should("return false as the file cannot be renamed");
+        this.assertEqual(false, Fs.rename("/dev/null/foo", "/dev/null/bar"));
+    }
+
+    public void test_mtime() {
+        this.should("set the new modified time on the file");
+        Fs.mtime("./fixtures/filesystem/modified.txt", (long)0);
+        this.assertEqual(true, Fs.mtime("./fixtures/filesystem/modified.txt", (long)123451000));
+        this.assertEqual((long)123451000, Fs.stat("./fixtures/filesystem/modified.txt").modify);
+    }
+
+    public void test_mtime_null() {
+        this.should("return false as the file doesn't exist");
+        this.assertEqual(false, Fs.mtime("/dev/null/foo", (long)123451000));
     }
 }
