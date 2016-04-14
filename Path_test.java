@@ -217,7 +217,7 @@ public class Path_test extends Test {
     public void test_relative_efg() {
         this.should("return a relative path to efg");
         String path = Path.relative("/a/b/c", "/e/f/g");
-        this.assertEqual("../../e/f/g", path);
+        this.assertEqual("../../../e/f/g", path);
     }
 
     public void test_relative_match() {
@@ -234,35 +234,40 @@ public class Path_test extends Test {
 
     public void test_relative_cwd_dev() {
         this.should("return a path from cwd to dev null");
-        String path = Path.relative("/dev/null", "");
-        this.assertEqual("", path);
+        String path = Path.relative("", "/dev/null");
+        this.assertEqual(true, path.contains("../../dev/null"));
     }
 
     public void test_relative_dev_cwd() {
         this.should("return a path from dev null to cwd");
-        String path = Path.relative("", "/dev/null");
-        this.assertEqual("", path);
+        String path = Path.relative("/dev/null", "");
+        this.assertEqual("../.." + System.getProperty("user.dir"), path);
     }
 
-    public void test_resolve_relative() {
-        this.should("return a resolve relative path");
+    public void test_resolve() {
+        this.should("returns a resolved relative path");
         String from = "/data/orandea/test/aaa";
         String to = "/data/orandea/impl/bbb";
         this.assertEqual(Path.resolve(from, Path.relative(from, to)), Path.resolve(to));
     }
 
-    public void test_resolve_relative_second() {
-        this.should("returns absolute path of joined parts");
-        this.assertEqual("/foo/bar/baz", Path.resolve("/foo/bar", "./baz"));
+    public void test_resolve_relative() {
+        this.should("returns the relative path for the current directory");
+        this.assertEqual("../../etc", Path.resolve("./foo/bar", "/etc"));
     }
 
     public void test_resolve_absolute_second() {
-        this.should("returns absolute path of last part");
-        this.assertEqual("/tmp/file", Path.resolve("/foo/bar", "/tmp/file/"));
+        this.should("returns a relative path gogin to root and down");
+        this.assertEqual("../../tmp/file", Path.resolve("/foo/bar", "/tmp/file/"));
     }
 
-    public void test_resolve_absolute_mixed() {
-        this.should("returns absolute path of all parts");
-        this.assertEqual("wwwroot/static_files/gif/image.gif", Path.resolve("wwwroot", "static_files/png/", "../gif/image.gif"));
+    public void test_resolve_cwd() {
+        this.should("returns a relative path from the cwd");
+        this.assertEqual(System.getProperty("user.dir") + "/wwwroot/static_files/gif/image.gif", Path.resolve("wwwroot", "static_files/png/", "../gif/image.gif"));
+    }
+
+    public void test_resolve_cwd_default() {
+        this.should("returns an absolute path from the cwd ./");
+        this.assertEqual(System.getProperty("user.dir") + "/wwwroot/static_files/gif/image.gif", Path.resolve("./wwwroot", "static_files/png/", "../gif/image.gif"));
     }
 }

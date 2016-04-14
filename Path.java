@@ -281,31 +281,29 @@ public class Path {
     // will be used instead of the zero-length strings. If both the paths are the same then a 
     // zero-length string will be returned.
     public static String relative(String from, String to) {
-        if (from.isEmpty()) {
-            from = System.getProperty("user.dir");
-        }
-        if (to.isEmpty()) {
-            to = System.getProperty("user.dir");
-        }
+        from = Path.resolve(from).substring(1);
+        to = Path.resolve(to).substring(1);
         if (from.equals(to)) {
             return "";
         }
-        String[] fromParts = Path.normalize(from).split(Path.sep);
-        String[] toParts = Path.normalize(to).split(Path.sep);
-        String path = "";
-        for (int i = 0; i < fromParts.length; i++) {
-            if (!fromParts[i].isEmpty()) {
-                if (fromParts[i].equals(toParts[i])) {
-                    path += Path.sep + "..";
-                } else {
-                    path += Path.sep + toParts[i];
-                }
+        String[] fromParts = from.split(Path.sep);
+        String[] toParts = to.split(Path.sep);
+        int length = Math.min(fromParts.length, toParts.length);
+        int samePartsLength = length;
+        for (int i = 0; i < length; i++) {
+            if (!fromParts[i].equals(toParts[i])) {
+                samePartsLength = i;
+                break;
             }
         }
-        if (path.length() == 0) {
-            return "";
+        String outputParts = "";
+        for (int i = samePartsLength; i < fromParts.length; i++) {
+            outputParts += ".." + Path.sep;
         }
-        return path.substring(1);
+        for (int i = samePartsLength; i < toParts.length; i++) {
+            outputParts += toParts[i] + Path.sep;
+        }
+        return outputParts.substring(0, outputParts.length() - 1);
     }
 
     // Resolves to to an absolute path.
@@ -345,19 +343,16 @@ public class Path {
     // ```
     // Note: If the arguments to resolve have zero-length strings then the current working directory will be used instead of them.
     public static String resolve(String... parts) {
-        String root = "";
-        String path = "";
-        for (String part : parts) {
-            if (!part.isEmpty() && Path.sep.equals(String.valueOf(part.charAt(0)))) {
-                root = part + Path.sep;
-            } else {
-                path += Path.sep + part;
-            }
+        String path = Path.join(parts);
+        switch (String.valueOf(path.charAt(0))) {
+            case Path.sep:
+                return path;
+            case Path.home:
+                // User home.
+                return Path.join(System.getProperty("user.home"), path);
         }
-        if (path.length() > 0) {
-            path = path.substring(1);
-        }
-        return Path.normalize(root + path);
+        // Current working directory.
+        return Path.join(System.getProperty("user.dir"), path);
     }
 
     // Resolves . and .. elements in a path array with directory names there
