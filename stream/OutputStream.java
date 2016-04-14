@@ -18,7 +18,7 @@ public class OutputStream extends java.io.OutputStream {
     public byte[] buffer = new byte[0];
 
     public void write(byte[] b, int off, int len) {
-        this.write(ByteArray.slice(b, off, off + len - 1));
+        this.write(this.slice(b, off, off + len - 1));
     }
 
     public void write(byte[] b) {
@@ -34,12 +34,29 @@ public class OutputStream extends java.io.OutputStream {
         this.write(new byte[]{(byte)b});
     }
 
+    // Local implementation of slice so this class has no dependencies.
+    protected byte[] slice(byte[] a, int start, int end) {
+        int len = a.length;
+        if (start > len || end < 0 || start > end) {
+            return new byte[0];
+        }
+        if (start < 0) {
+            start = 0;
+        }
+        if (end > len) {
+            end = len - 1;
+        }
+        byte[] b = new byte[end - start + 1];
+        System.arraycopy(a, start, b, 0, b.length);
+        return b;
+    }
+
     // Local implementation of append so this class has no dependencies.
-    protected static byte[] append(byte[] a, byte[] b) {
-        int len = a.length + b.length;
-        byte[] c = new byte[len];
+    protected byte[] append(byte[] a, byte b) {
+        int len = a.length;
+        byte[] c = new byte[len + 1];
         System.arraycopy(a, 0, c, 0, a.length);
-        System.arraycopy(b, 0, c, a.length, b.length);
+        c[len] = b;
         return c;
     }
 }

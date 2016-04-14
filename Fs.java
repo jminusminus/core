@@ -62,7 +62,13 @@ public class Fs {
 
     // Synchronous mkdir(2). No arguments other than a possible exception are given to the completion callback. mode defaults to 0o777.
     public static boolean mkdir(String path, int mode) {
-        return (new java.io.File(path)).mkdir();
+        try {
+            java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path));
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
     }
 
     public static boolean mkdirs(String path) {
@@ -71,7 +77,13 @@ public class Fs {
 
     // Recursive mkdir.
     public static boolean mkdirs(String path, int mode) {
-        return (new java.io.File(path)).mkdirs();
+        try {
+            java.nio.file.Files.createDirectories(java.nio.file.Paths.get(path));
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
     }
 
     // Synchronous readdir(3). Reads the contents of a directory.
@@ -146,7 +158,13 @@ public class Fs {
 
     // Synchronous unlink(2). No arguments other than a possible exception are given to the completion callback.
     public static boolean unlink(String path) {
-        return Fs.unlink(new java.io.File(path));
+        try {
+            java.nio.file.Files.delete(java.nio.file.Paths.get(path));
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
     }
 
     protected static boolean unlink(java.io.File f) {

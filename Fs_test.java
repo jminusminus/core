@@ -136,7 +136,7 @@ public class Fs_test extends Test {
 
     public void test_unlink_no_file() {
         this.should("return true even if the file doesn't exist");
-        this.assertEqual(true, Fs.unlink(this.tmp));
+        this.assertEqual(false, Fs.unlink(this.tmp));
     }
 
     public void test_stat_file() {
@@ -157,5 +157,20 @@ public class Fs_test extends Test {
         this.should("return the content of the file");
         byte[] b = Fs.readFile("./fixtures/filesystem/read.txt");
         this.assertEqual("read", new String(b));
+    }
+
+    public void test_mkdir() {
+        this.should("create the directory");
+        boolean b = Fs.mkdir("./fixtures/filesystem/newDir");
+        this.assertEqual(true, b);
+        Fs.unlink("./fixtures/filesystem/newDir");
+    }
+
+    public void test_mkdirs() {
+        this.should("create the directories");
+        boolean b = Fs.mkdirs("./fixtures/filesystem/newDir/newSubDir");
+        this.assertEqual(true, b);
+        Fs.unlink("./fixtures/filesystem/newDir/newSubDir");
+        Fs.unlink("./fixtures/filesystem/newDir");
     }
 }
