@@ -66,8 +66,18 @@ public class Fs {
     }
 
     // Synchronous chown(2). No arguments other than a possible exception are given to the completion callback.
-    public static boolean chown(String path, String uid, String gid) {
-        return false;
+    public static boolean chown(String path, String uid) {
+        try {
+            java.nio.file.Path p = java.nio.file.Paths.get(path);
+            java.nio.file.attribute.FileOwnerAttributeView view = java.nio.file.Files.getFileAttributeView(p, java.nio.file.attribute.FileOwnerAttributeView.class);
+            java.nio.file.attribute.UserPrincipalLookupService lookupService = java.nio.file.FileSystems.getDefault().getUserPrincipalLookupService();
+            java.nio.file.attribute.UserPrincipal userPrincipal = lookupService.lookupPrincipalByName(uid);
+            java.nio.file.Files.setOwner(p, userPrincipal);
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
     }
 
     public static boolean mkdir(String path) {
