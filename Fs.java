@@ -175,10 +175,10 @@ public class Fs {
         return stat;
     }
 
-    // Synchronous truncate(2). No arguments other than a possible exception are given to the completion callback. A file descriptor can also be passed as the first argument. In this case, fs.ftruncate() is called.
-    public static boolean truncate(String path, int len) {
+    // Truncate the given file to the give length.
+    public static boolean truncate(String file, int len) {
         try {
-            java.nio.file.Files.write(java.nio.file.Paths.get(path), new byte[len], java.nio.file.StandardOpenOption.TRUNCATE_EXISTING);
+            java.nio.file.Files.write(java.nio.file.Paths.get(file), new byte[len], java.nio.file.StandardOpenOption.TRUNCATE_EXISTING);
         } catch (Exception e) {
             System.out.println(e);
             return false;
@@ -186,7 +186,7 @@ public class Fs {
         return true;
     }
 
-    // Synchronous unlink(2). No arguments other than a possible exception are given to the completion callback.
+    // Delete a file or directory if is exists.
     public static boolean unlink(String path) {
         try {
             java.nio.file.Files.delete(java.nio.file.Paths.get(path));

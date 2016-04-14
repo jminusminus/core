@@ -187,4 +187,13 @@ public class Fs_test extends Test {
         Fs.unlink("./fixtures/filesystem/newDir/newSubDir");
         Fs.unlink("./fixtures/filesystem/newDir");
     }
+
+    public void test_truncate() {
+        this.should("truncate the file to 10 bytes");
+        Fs.writeFile("./fixtures/filesystem/truncate.txt", "12345678901234567890".getBytes());
+        this.assertEqual((long)20, Fs.stat("./fixtures/filesystem/truncate.txt").size);
+        Fs.truncate("./fixtures/filesystem/truncate.txt", 10);
+        this.assertEqual((long)10, Fs.stat("./fixtures/filesystem/truncate.txt").size);
+        Fs.unlink("./fixtures/filesystem/truncate.txt");
+    }
 }
