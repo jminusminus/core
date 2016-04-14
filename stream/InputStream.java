@@ -40,7 +40,7 @@ public class InputStream extends java.io.InputStream {
         return b[0];
     }
 
-    // Local copy method so this class has no dependencies.
+    // Local implementation of copy so this class has no dependencies.
     protected static int copy(byte[] a, int start, byte[] b) {
         int aLen = a.length;
         if (start < 0 || start > aLen) {
