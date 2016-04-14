@@ -15,8 +15,13 @@ public class Writable_test extends Test {
     }
 
     public void test_new_Readable() {
-        // this.should("return an instance of Writable");
-        // Writable w = new Writable();
-        // this.assertEqual("github.com.jminusminus.core.stream.Writable", w.getClass().getName());
+        this.should("return an instance of Writable");
+        Writable r;
+        try {
+            r = new Writable(new java.io.FileOutputStream("./fixtures/stream/output.txt"));
+            this.assertEqual("github.com.jminusminus.core.stream.Writable", r.getClass().getName());
+        } catch (Exception e) {
+            this.assertEqual("github.com.jminusminus.core.stream.Writable", e);
+        }
     }
 }
