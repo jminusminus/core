@@ -12,15 +12,23 @@ public class Readable {
     protected java.io.InputStream stream;
 
     Readable(String str) {
-
+        try {
+            this.stream = new InputStream(str.getBytes("utf8"));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     Readable(String str, String encoding) {
-
+        try {
+            this.stream = new InputStream(str.getBytes(encoding));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     Readable(byte[] b) {
-
+        this.stream = new InputStream(b);
     }
 
     Readable(java.io.InputStream stream) {
@@ -38,7 +46,6 @@ public class Readable {
         return -1;
     }
 
-    // ### 
     // Closes this input stream and releases any system resources associated with the stream.
     public boolean close() {
         try {
@@ -74,6 +81,21 @@ public class Readable {
     // 
     public byte[] read(int size) {
         return new byte[size];
+    }
+
+    //
+    public String readTo(String str, String encoding) {
+        return "";
+    }
+
+    //
+    public byte[] readTo(int code) {
+        return new byte[0];
+    }
+
+    //
+    public byte[] readTo(byte code) {
+        return new byte[0];
     }
 
     // 

@@ -6,11 +6,14 @@
 
 package github.com.jminusminus.core.stream;
 
-import github.com.jminusminus.core.util.ByteArray;
-
 public class InputStream extends java.io.InputStream {
+    // Jmm Readable extends https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html
 
+    // Helper for unit testing.
+    // 
+    // When InputStream.throwException is set to true any InputStream.read() call will throw a runtime exception.
     public boolean throwException = false;
+
     protected byte[] buffer;
     protected int position = 0;
 
@@ -22,7 +25,7 @@ public class InputStream extends java.io.InputStream {
         if (this.throwException) {
             throw new RuntimeException("java.io.IOException");
         }
-        int copied = ByteArray.copy(this.buffer, this.position, b);
+        int copied = this.copy(this.buffer, this.position, b);
         this.position = this.position + copied;
         return copied;
     }
@@ -35,5 +38,19 @@ public class InputStream extends java.io.InputStream {
             System.out.println(e);
         }
         return b[0];
+    }
+
+    // Local copy method so this class has no dependencies.
+    protected static int copy(byte[] a, int start, byte[] b) {
+        int aLen = a.length;
+        if (start < 0 || start > aLen) {
+            return -1;
+        }
+        int bLen = b.length;
+        if (bLen > aLen - start) {
+            bLen = aLen - start;
+        }
+        System.arraycopy(a, start, b, 0, bLen);
+        return bLen;
     }
 }
