@@ -17,6 +17,6 @@ public class Writable_test extends Test {
     public void test_new_Readable() {
         this.should("return an instance of Writable");
         Writable w = new Writable();
-        this.assertEqual("github.com.jminusminus.core.strea.Writable", w.getClass().getName());
+        this.assertEqual("github.com.jminusminus.core.stream.Writable", w.getClass().getName());
     }
 }
