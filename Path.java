@@ -193,7 +193,17 @@ public class Path {
     // Note: If the arguments to join have zero-length strings they will be ignored. If the joined path string 
     // is a zero-length string then `.` will be returned, which represents the current working directory.
     public static String join(String... p) {
-        return Path.normalize(String.join(Path.sep, p));
+        if (p.length == 0) {
+            return ".";
+        }
+        String path = Path.normalizeArray(String.join(Path.sep, p).split(Path.sep));
+        if (path.isEmpty()) {
+            return ".";
+        }
+        if (!p[0].isEmpty() && Path.sep.equals(String.valueOf(p[0].charAt(0)))) {
+            return Path.sep + path;
+        }
+        return path;
     }
 
     // Normalize a string path, taking care of ".." and "." parts.
@@ -221,7 +231,6 @@ public class Path {
                 break;
             case ".":
                 if (p.length() > 1 && p.charAt(1) == '.') {
-
                     break;
                 }
             default: // Current working directory.
@@ -360,6 +369,9 @@ public class Path {
             } else if (!"..".equals(part)) {
                 path += Path.sep + part;
             }
+        }
+        if (path.length() == 0) {
+            return "";
         }
         // Remove the first separator.
         return path.substring(1);

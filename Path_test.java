@@ -156,6 +156,24 @@ public class Path_test extends Test {
         this.assertEqual("/foo/bar/baz/asdf", path);
     }
 
+    public void test_join_empty() {
+        this.should("return the relative directory marker");
+        String path = Path.join("", "", "");
+        this.assertEqual(".", path);
+    }
+
+    public void test_join_relative() {
+        this.should("return the relative directory path");
+        String path = Path.join("./foo", "bar");
+        this.assertEqual("foo/bar", path);
+    }
+
+    public void test_join_relative_up_one() {
+        this.should("return the relative directory path");
+        String path = Path.join("../foo", "bar");
+        this.assertEqual("bar", path);
+    }
+
     public void test_normalize_with_first() {
         this.should("return an absolute normalized path with first ..");
         String path = Path.normalize("../foo/bar//baz/asdf/quux");
