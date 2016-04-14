@@ -56,46 +56,6 @@ public class Fs {
         return false;
     }
 
-    // Synchronous close(2). No arguments other than a possible exception are given to the completion callback.
-    public static boolean close(String fd) {
-        return false;
-    }
-
-    // Synchronous fchmod(2). No arguments other than a possible exception are given to the completion callback.
-    public static boolean fchmod(String fd, String mode) {
-        return false;
-    }
-
-    // Synchronous fchown(2). No arguments other than a possible exception are given to the completion callback.
-    public static boolean fchown(String fd, String uid, String gid) {
-        return false;
-    }
-
-    // Synchronous fdatasync(2). No arguments other than a possible exception are given to the completion callback.
-    public static boolean fdatasync(String fd) {
-        return false;
-    }
-
-    // Synchronous fstat(2). The callback gets two arguments (err, stats) where stats is a fs.Stats object. fstat() is identical to stat(), except that the file to be stat-ed is specified by the file descriptor fd.
-    public static String fstat(String fd) {
-        return "";
-    }
-
-    // Synchronous fsync(2). No arguments other than a possible exception are given to the completion callback.
-    public static boolean fsync(String fd) {
-        return false;
-    }
-
-    // Synchronous ftruncate(2). No arguments other than a possible exception are given to the completion callback.
-    public static boolean ftruncate(String fd, int len) {
-        return false;
-    }
-
-    // Change the file timestamps of a file referenced by the supplied file descriptor.
-    public static boolean futimes(String fd, int atime, int mtime) {
-        return false;
-    }
-
     public static boolean mkdir(String path) {
         return Fs.mkdir(path, 0777);
     }
@@ -112,64 +72,6 @@ public class Fs {
     // Recursive mkdir.
     public static boolean mkdirs(String path, int mode) {
         return (new java.io.File(path)).mkdirs();
-    }
-
-    // Synchronous file open. See open(2). flags can be:
-    // 
-    // 'r' - Open file for reading. An exception occurs if the file does not exist.
-    // 
-    // 'r+' - Open file for reading and writing. An exception occurs if the file does not exist.
-    // 
-    // 'rs' - Open file for reading in synchronous mode. Instructs the operating system to bypass the local file system cache.
-    // 
-    // This is primarily useful for opening files on NFS mounts as it allows you to skip the potentially stale local cache. It has a very real impact on I/O performance so don't use this flag unless you need it.
-    // 
-    // Note that this doesn't turn fs.open() into a synchronous blocking call. If that's what you want then you should be using fs.openSync()
-    // 
-    // 'rs+' - Open file for reading and writing, telling the OS to open it synchronously. See notes for 'rs' about using this with caution.
-    // 
-    // 'w' - Open file for writing. The file is created (if it does not exist) or truncated (if it exists).
-    // 
-    // 'wx' - Like 'w' but fails if path exists.
-    // 
-    // 'w+' - Open file for reading and writing. The file is created (if it does not exist) or truncated (if it exists).
-    // 
-    // 'wx+' - Like 'w+' but fails if path exists.
-    // 
-    // 'a' - Open file for appending. The file is created if it does not exist.
-    // 
-    // 'ax' - Like 'a' but fails if path exists.
-    // 
-    // 'a+' - Open file for reading and appending. The file is created if it does not exist.
-    //
-    // 'ax+' - Like 'a+' but fails if path exists.
-    // 
-    // mode sets the file mode (permission and sticky bits), but only if the file was created. It defaults to 0666, readable and writable.
-    // 
-    // The callback gets two arguments (err, fd).
-    // 
-    // The exclusive flag 'x' (O_EXCL flag in open(2)) ensures that path is newly created. On POSIX systems, path is considered to exist even if it is a symlink to a non-existent file. The exclusive flag may or may not work with network file systems.
-    // 
-    // flags can also be a number as documented by open(2); commonly used constants are available from require('constants'). On Windows, flags are translated to their equivalent ones where applicable, e.g. O_WRONLY to FILE_GENERIC_WRITE, or O_EXCL|O_CREAT to CREATE_NEW, as accepted by CreateFileW.
-    // 
-    // On Linux, positional writes don't work when the file is opened in append mode. The kernel ignores the position argument and always appends the data to the end of the file.
-    public static String open(String path, String flags, int mode) {
-        return "";
-    }
-
-    // Read data from the file specified by fd.
-    // 
-    // buffer is the buffer that the data will be written to.
-    // 
-    // offset is the offset in the buffer to start writing at.
-    // 
-    // length is an integer specifying the number of bytes to read.
-    // 
-    // position is an integer specifying where to begin reading from in the file. If position is null, data will be read from the current file position.
-    // 
-    // The callback is given the three arguments, (err, bytesRead, buffer).
-    public static int read(String fd, byte[] buffer, int offset, int length, int position) {
-        return 0;
     }
 
     // Synchronous readdir(3). Reads the contents of a directory.
@@ -206,7 +108,7 @@ public class Fs {
     // If options is a string, then it specifies the encoding. Example:
     // 
     // fs.readFile('/etc/passwd', 'utf8', callback);
-    public static byte[] readFile(String file, String options) {
+    public static byte[] readFile(String file, String encoding) {
         return new byte[0];
     }
 
@@ -348,46 +250,6 @@ public class Fs {
     // Note: fs.watch() is more efficient than fs.watchFile and fs.unwatchFile. fs.watch should be used instead of fs.watchFile and fs.unwatchFile when possible.
     public static boolean watchFile(String filename, String options, String listener) {
         return false;
-    }
-
-    // Write data to the file specified by fd. If data is not a Buffer instance then the value will be coerced to a string.
-    // 
-    // position refers to the offset from the beginning of the file where this data should be written. If typeof position !== 'number' the data will be written at the current position. See pwrite(2).
-    // 
-    // encoding is the expected string encoding.
-    // 
-    // The callback will receive the arguments (err, written, string) where written specifies how many bytes the passed string required to be written. Note that bytes written is not the same as string characters. See Buffer.byteLength.
-    // 
-    // Unlike when writing buffer, the entire string must be written. No substring may be specified. This is because the byte offset of the resulting data may not be the same as the string offset.
-    // 
-    // Note that it is unsafe to use fs.write multiple times on the same file without waiting for the callback. For this scenario, fs.createWriteStream is strongly recommended.
-    // 
-    // On Linux, positional writes don't work when the file is opened in append mode. The kernel ignores the position argument and always appends the data to the end of the file.
-    // 
-    // fs.writeFile(file, data[, options], callback)#
-    // file <String> filename
-    // data <String> | <Buffer>
-    // options <Object> | <String>
-    // encoding <String> | <Null> default = 'utf8'
-    // mode <Number> default = 0o666
-    // flag <String> default = 'w'
-    // callback <Function>
-    // Asynchronously writes data to a file, replacing the file if it already exists. data can be a string or a buffer.
-    // 
-    // The encoding option is ignored if data is a buffer. It defaults to 'utf8'.
-    // 
-    // Example:
-    // 
-    // fs.writeFile('message.txt', 'Hello Node.js', (err) => {
-    //   if (err) throw err;
-    //   console.log('It\'s saved!');
-    // });
-    // If options is a string, then it specifies the encoding. Example:
-    // 
-    // fs.writeFile('message.txt', 'Hello Node.js', 'utf8', callback);
-    // Note that it is unsafe to use fs.writeFile multiple times on the same file without waiting for the callback. For this scenario, fs.createWriteStream is strongly recommended.
-    public static int write(String fd, byte[] data, int position, String encoding) {
-        return 0;
     }
 
     // Write data to a file, creating the file if it does 
