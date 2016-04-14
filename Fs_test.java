@@ -157,26 +157,26 @@ public class Fs_test extends Test {
     }
 
     public void test_appendFile_existing() {
-        this.should("append to an existing file and write the bytes to it");
+        this.should("append bytes to an existing file");
         Fs.appendFile(this.tmp, "test".getBytes());
         this.assertEqual(true, Fs.appendFile(this.tmp, "test".getBytes()));
         Fs.unlink(this.tmp);
     }
 
     public void test_appendFile_string() {
-        this.should("create a new file and write the string to it");
+        this.should("create a new file and append the string to it");
         this.assertEqual(true, Fs.appendFile(this.tmp, "test"));
         Fs.unlink(this.tmp);
     }
 
     public void test_appendFile_string_encoding() {
-        this.should("create a new file and write the string as utf8");
+        this.should("create a new file and append the string as utf8");
         this.assertEqual(true, Fs.appendFile(this.tmp, "test", "utf8"));
         Fs.unlink(this.tmp);
     }
 
     public void test_appendFile_string_bad_encoding() {
-        this.should("create a new file and write the string as utf8");
+        this.should("create a new file and append the string as utf8");
         this.assertEqual(false, Fs.appendFile(this.tmp, "test", "xxx"));
         Fs.unlink(this.tmp);
     }
@@ -228,6 +228,24 @@ public class Fs_test extends Test {
         this.assertEqual(true, Fs.writeFile("./fixtures/filesystem/write.txt", "write foo".getBytes()));
         byte[] b = Fs.readFile("./fixtures/filesystem/write.txt");
         this.assertEqual("write foo", new String(b));
+    }
+
+    public void test_writeFile_string() {
+        this.should("create a new file and write the string to it");
+        this.assertEqual(true, Fs.writeFile(this.tmp, "test"));
+        Fs.unlink(this.tmp);
+    }
+
+    public void test_writeFile_string_encoding() {
+        this.should("create a new file and write the string as utf8");
+        this.assertEqual(true, Fs.writeFile(this.tmp, "test", "utf8"));
+        Fs.unlink(this.tmp);
+    }
+
+    public void test_writeFile_string_bad_encoding() {
+        this.should("create a new file and write the string as utf8");
+        this.assertEqual(false, Fs.writeFile(this.tmp, "test", "xxx"));
+        Fs.unlink(this.tmp);
     }
 
     public void test_writeFile_null() {

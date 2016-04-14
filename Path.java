@@ -26,39 +26,9 @@ public class Path {
     public String name = "";
 
     // The platform-specific path delimiter, ";" or ":".
-    //
-    // An example on *nix:
-    //
-    // ```java
-    // console.log(process.env.PATH)
-    // // "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
-    // 
-    // process.env.PATH.split(path.delimiter)
-    // // returns ["/usr/bin", "/bin", "/usr/sbin", "/sbin", "/usr/local/bin"]
-    // ```
-    // An example on Windows:
-    // ```java
-    // console.log(process.env.PATH)
-    // // "C:\Windows\system32;C:\Windows;C:\Program Files\node\"
-    //
-    // process.env.PATH.split(path.delimiter)
-    // // returns ["C:\\Windows\\system32", "C:\\Windows", "C:\\Program Files\\node\\"]
-    // ```
     public static final String delimiter = ":";
 
     // The platform-specific file separator. "\\" or "/".
-    //
-    // An example on *nix:
-    //
-    //```java
-    // "foo/bar/baz".split(path.sep)
-    // // returns ["foo", "bar", "baz"]
-    //```
-    // An example on Windows:
-    //```java
-    // "foo\\bar\\baz".split(path.sep)
-    // // returns ["foo", "bar", "baz"]
-    //```
     public static final String sep = "/";
 
     // The platform-specific home directory. "%HOMEPATH%" or "~".
@@ -68,15 +38,15 @@ public class Path {
         return Path.basename(p, null);
     }
 
-    // Return the last portion of a path. Similar to the Unix basename command.
+    // Return the last portion of the specified path. Similar to the Unix basename command.
     //
     // Example:
     //
     // ```java
-    // Path.basename("/foo/bar/baz/asdf/quux.html")
+    // String p = Path.basename("/foo/bar/baz/asdf/quux.html");
     // // returns "quux.html"
     //
-    // Path.basename("/foo/bar/baz/asdf/quux.html", ".html")
+    // String p = Path.basename("/foo/bar/baz/asdf/quux.html", ".html");
     // // returns "quux"
     // ```
     public static String basename(String p, String ext) {
@@ -90,12 +60,12 @@ public class Path {
         return basename.replace(ext, "");
     }
 
-    // Return the directory name of a path. Similar to the Unix dirname command.
+    // Return the directory name of the specified path. Similar to the Unix dirname command.
     //
     // Example:
     //
     // ```java
-    // Path.dirname("/foo/bar/baz/asdf/quux")
+    // String p = Path.dirname("/foo/bar/baz/asdf/quux");
     // // returns "/foo/bar/baz/asdf"
     // ```
     public static String dirname(String p) {
@@ -105,24 +75,26 @@ public class Path {
         return p.substring(0, p.lastIndexOf(Path.sep));
     }
 
-    // Return the extension of the path, from the last "." to end of string in the last portion of 
+    // Return the extension of the specified path, from the last "." to end of string in the last portion of 
     // the path. If there is no "." in the last portion of the path or the first character of it 
-    // is ".", then it returns an empty string. Examples:
+    // is ".", then it returns an empty string.
+    //
+    // Examples:
     //
     // ```java
-    // Path.extname("index.html")
+    // String e = Path.extname("index.html");
     // // returns ".html"
     //
-    // Path.extname("index.coffee.md")
+    // String e = Path.extname("index.coffee.md");
     // // returns ".md"
     //
-    // Path.extname("index.")
+    // String e = Path.extname("index.");
     // // returns "."
     //
-    // Path.extname("index")
+    // String e = Path.extname("index");
     // // returns ""
     //
-    // Path.extname(".index")
+    // String e = Path.extname(".index");
     // // returns ""
     // ```
     public static String extname(String p) {
@@ -132,9 +104,9 @@ public class Path {
         return p.substring(p.lastIndexOf("."));
     }
 
-    // Returns a path string from an object. This is the opposite of Path.parse.
+    // Returns a path string from the current Path object. This is the opposite of Path.parse().
     //
-    // If Path Object has dir and base properties, the returned string will be a concatenation 
+    // If the Path Object has dir and base properties, the returned string will be a concatenation 
     // of the dir property, the platform-dependent path separator, and the base property.
     //
     // If the dir property is not supplied, the root property will be used as the dir property. 
@@ -151,22 +123,28 @@ public class Path {
     // Example:
     //
     // ```java
-    // path.format({
+    // Path = {
     //     root : "/",
     //     dir : "/home/user/dir",
     //     base : "file.txt",
     //     ext : ".txt",
     //     name : "file"
-    // });
-    // // returns "/home/user/dir/file.txt"
+    // }
     //
-    // // `root` will be used if `dir` is not specified and `name` + `ext` will be used
-    // // if `base` is not specified
-    // path.format({
+    // String p = Path.toString();
+    // // returns "/home/user/dir/file.txt"
+    // ```
+    //
+    // `root` will be used if `dir` is not specified and `name` + `ext` will be used if `base` is not specified.
+    //
+    // ```java
+    // Path = {
     //     root : "/",
     //     ext : ".txt",
     //     name : "file"
-    // })
+    // }
+    //
+    // String p = Path.toString();
     // // returns "/file.txt"
     // ```
     public String toString() {
@@ -182,19 +160,21 @@ public class Path {
         return this.name + this.ext;
     }
 
-    // Determines whether path is an absolute path. An absolute path will always resolve to the same location, regardless of the working directory.
+    // Determines whether the specified path is an absolute path. An absolute path will always 
+    // resolve to the same location, regardless of the working directory.
     //
     // Examples:
     //
     // ```java
-    // Path.isAbsolute("/foo/bar") // true
-    // Path.isAbsolute("/baz/..")  // true
-    // Path.isAbsolute("qux/")     // false
-    // Path.isAbsolute(".")        // false
-    // Path.isAbsolute("")         // false
-    // Path.isAbsolute(null)       // false
+    // boolean b = Path.isAbsolute("/foo/bar"); // true
+    // boolean b = Path.isAbsolute("/baz/..");  // true
+    // boolean b = Path.isAbsolute("qux/");     // false
+    // boolean b = Path.isAbsolute(".");        // false
+    // boolean b = Path.isAbsolute("");         // false
+    // boolean b = Path.isAbsolute(null);       // false
     // ```
-    // Note: If the path string passed as parameter is a zero-length string, unlike other path module functions, it will be used as-is and false will be returned.
+    //
+    // Note: If the path string passed as parameter is a zero-length string false will be returned.
     public static boolean isAbsolute(String p) {
         if (p == null || p.isEmpty()) {
             return false;
@@ -204,21 +184,21 @@ public class Path {
 
     // Join all arguments together and normalize the resulting path.
     //
-    // Arguments must be strings. In v0.8, non-string arguments were silently ignored. In v0.10 and up, an exception is thrown.
-    //
     // Example:
+    //
     // ```java
-    // Path.join("/foo", "bar", "baz/asdf", "quux", "..")
+    // String p = Path.join("/foo", "bar", "baz/asdf", "quux", "..");
     // // returns "/foo/bar/baz/asdf"
     // ```
-    // Note: If the arguments to join have zero-length strings, unlike other path module functions, they will be ignored. If the joined path string is a zero-length string then "." will be returned, which represents the current working directory.
+    // Note: If the arguments to join have zero-length strings they will be ignored. If the joined path string 
+    // is a zero-length string then `.` will be returned, which represents the current working directory.
     public static String join(String... p) {
         return Path.normalize(String.join(Path.sep, p));
     }
 
     // Normalize a string path, taking care of ".." and "." parts.
     //
-    // When multiple slashes are found, they"re replaced by a single one; 
+    // When multiple slashes are found, they're replaced by a single one; 
     // when the path contains a trailing slash, it is preserved. On Windows backslashes are used.
     //
     // Example:

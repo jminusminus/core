@@ -42,6 +42,8 @@ public class Fs {
     // 
     // ```java
     // boolean b = Fs.access("/tmp/foo.txt", Fs.R_OK | Fs.W_OK);
+    // 
+    // boolean b = Fs.access("/tmp/foo.txt");
     // ```
     // Returns true on success and false on failure.
     public static boolean access(String path, int mode) {
@@ -265,7 +267,14 @@ public class Fs {
         return stat;
     }
 
-    // Truncate the given file to the give length.
+    // Truncate the specified file to the given length.
+    // 
+    // Example:
+    //
+    // ```java
+    // boolean b = Fs.truncate("/tmp/foo.txt", 100);
+    // ```
+    // Returns true on success and false on failure.
     public static boolean truncate(String file, int len) {
         try {
             java.nio.file.Files.write(java.nio.file.Paths.get(file), new byte[len], java.nio.file.StandardOpenOption.TRUNCATE_EXISTING);
@@ -276,7 +285,14 @@ public class Fs {
         return true;
     }
 
-    // Delete a file or directory if is exists.
+    // Deletes the specified file or directory if is exists.
+    // 
+    // Example:
+    //
+    // ```java
+    // boolean b = Fs.unlink("/tmp/foo.txt");
+    // ```
+    // Returns true on success and false on failure.
     public static boolean unlink(String path) {
         try {
             java.nio.file.Files.delete(java.nio.file.Paths.get(path));
@@ -287,7 +303,14 @@ public class Fs {
         return true;
     }
 
-    // Change modified file timestamp of the file referenced by the supplied path.
+    // Changes the modified timestamp of the specified path.
+    //
+    // Example:
+    //
+    // ```java
+    // boolean b = Fs.mtime("/tmp/foo.txt", (long)123456000);
+    // ```
+    // Returns true on success and false on failure.
     public static boolean mtime(String path, long time) {
         try {
             java.nio.file.Files.setLastModifiedTime(java.nio.file.Paths.get(path), java.nio.file.attribute.FileTime.fromMillis(time));
@@ -298,12 +321,32 @@ public class Fs {
         return true;
     }
 
-    // Write data to a file, creating the file if it does 
-    // not yet exist. Data can be a string or byte array.
+    public static boolean writeFile(String file, String data) {
+        return Fs.writeFile(file, data, "utf8");
+    }
+
+    public static boolean writeFile(String file, String data, String encoding) {
+        try {
+            return Fs.writeFile(file, data.getBytes(encoding));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    // Write data to a file, creating the file if it does not yet exist. Data can be a string or byte array.
     //
     // Example:
     //
-    //     Fs.writeFile("message.txt", "data to append".getBytes());
+    // ```java
+    // boolean b = Fs.writeFile("/tmp/foo.txt", "data to write".getBytes());
+    //
+    // boolean b = Fs.writeFile("/tmp/foo.txt", "data to write", "utf8");
+    //
+    // boolean b = Fs.writeFile("/tmp/foo.txt", "data to write");
+    // // defaults to utf8
+    // ```
+    // Returns true on success and false on failure.
     public static boolean writeFile(String file, byte[] data) {
         try {
             java.nio.file.Files.write(java.nio.file.Paths.get(file), data, java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.TRUNCATE_EXISTING);
