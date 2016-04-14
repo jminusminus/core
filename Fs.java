@@ -250,8 +250,24 @@ public class Fs {
     }
 
     // Synchronous stat(2). The callback gets two arguments (err, stats) where stats is a fs.Stats object. See the fs.Stats section for more information.
-    public static String stat(String path) {
-        return "";
+    public static Stat stat(String path) {
+        java.nio.file.attribute.BasicFileAttributes attrs;
+        try {
+            attrs = java.nio.file.Files.readAttributes(java.nio.file.Paths.get(path), java.nio.file.attribute.BasicFileAttributes.class);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        Stat stat = new Stat();
+        stat.dir = attrs.isDirectory();
+        stat.file = attrs.isRegularFile();
+        stat.link = attrs.isSymbolicLink();
+        stat.other = attrs.isOther();
+        stat.size = attrs.size();
+        stat.access = attrs.lastAccessTime().toMillis();
+        stat.modify = attrs.lastModifiedTime().toMillis();
+        stat.create = attrs.creationTime().toMillis();
+        return stat;
     }
 
     // Synchronous symlink(2). No arguments other than a possible exception are given to the completion callback. The type argument can be set to 'dir', 'file', or 'junction' (default is 'file') and is only available on Windows (ignored on other platforms). Note that Windows junction points require the destination path to be absolute. When using 'junction', the target argument will automatically be normalized to absolute path.

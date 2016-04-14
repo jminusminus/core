@@ -138,4 +138,18 @@ public class Fs_test extends Test {
         this.should("return true even if the file doesn't exist");
         this.assertEqual(true, Fs.unlink(this.tmp));
     }
+
+    public void test_stat_file() {
+        this.should("return true from file");
+        Stat s = Fs.stat("./fixtures/filesystem/read_write_execute.txt");
+        this.assertEqual(false, s.dir);
+        this.assertEqual(true, s.file);
+    }
+
+    public void test_stat_dir() {
+        this.should("return true from dir");
+        Stat s = Fs.stat("./fixtures/filesystem");
+        this.assertEqual(true, s.dir);
+        this.assertEqual(false, s.file);
+    }
 }
