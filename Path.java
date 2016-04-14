@@ -206,43 +206,28 @@ public class Path {
         if (!p[0].isEmpty() && Path.sep.equals(String.valueOf(p[0].charAt(0)))) {
             return Path.sep + path;
         }
-        if (!p[0].isEmpty() && Path.sep.equals(String.valueOf('.'))) {
+        if (!p[0].isEmpty() && ".".equals(String.valueOf(p[0].charAt(0)))) {
             return "." + Path.sep + path;
         }
         return path;
     }
 
-    // Normalize a string path, taking care of ".." and "." parts.
+    // Normalize the specified path, taking care of ".." and "." parts.
     //
-    // When multiple slashes are found, they're replaced by a single one; 
-    // when the path contains a trailing slash, it is preserved. On Windows backslashes are used.
+    // When multiple slashes are found, they're replaced by a single one; when the path contains 
+    // a trailing slash, it is NOT preserved. On Windows backslashes are used.
     //
     // Example:
     //
     // ```java
-    // Path.normalize("/foo/bar//baz/asdf/quux/..")
+    // String = Path.normalize("/foo/bar//baz/asdf/quux/..");
     // // returns "/foo/bar/baz/asdf"
     // ```
     //
-    // Note: If the path string passed as argument is a zero-length string then "." will be returned, which represents the current working directory.
+    // Note: If the path string passed as argument is a zero-length string then "." will be returned, 
+    // which represents the current working directory.
     public static String normalize(String p) {
-        if (p.isEmpty()) {
-            p = ".";
-        }
-        switch (String.valueOf(p.charAt(0))) {
-            case Path.sep:
-                break;
-            case Path.home: // User home.
-                p = System.getProperty("user.home") + Path.sep + p;
-                break;
-            case ".":
-                if (p.length() > 1 && p.charAt(1) == '.') {
-                    break;
-                }
-            default: // Current working directory.
-                p = System.getProperty("user.dir") + Path.sep + p;
-        }
-        return Path.sep + Path.normalizeArray(p.split(Path.sep));
+        return Path.join(new String[]{p});
     }
 
     // Returns an object from a path string.
@@ -250,9 +235,9 @@ public class Path {
     // An example on *nix:
     //
     // ```java
-    // Path.parse("/home/user/dir/file.txt")
+    // Fs.Path p = Path.parse("/home/user/dir/file.txt");
     // // returns
-    // // Path {
+    // // Path = {
     // //    root : "/",
     // //    dir : "/home/user/dir",
     // //    base : "file.txt",
@@ -260,6 +245,7 @@ public class Path {
     // //    name : "file"
     // // }
     // ```
+    // If there is an error null is returned.
     public static Path parse(String p) {
         Path path = new Path();
         if (Path.sep.equals(String.valueOf(p.charAt(0)))) {
@@ -275,27 +261,39 @@ public class Path {
     // Solve the relative path from from to to.
     // 
     // At times we have two absolute paths, and we need to derive the relative path from one to the other. 
-    // This is actually the reverse transform of path.resolve, which means we see that:
+    // This is actually the reverse transform of Path.resolve(), which means we see that:
     //
     // ```java
-    // Path.resolve(from, Path.relative(from, to)) == Path.resolve(to)
+    // String p = Path.resolve(from, Path.relative(from, to)) == Path.resolve(to);
+    // ```
+    //
     // Examples:
-    // 
-    // Path.relative("C:\\orandea\\test\\aaa", "C:\\orandea\\impl\\bbb")
-    // // returns "..\\..\\impl\\bbb"
-    // 
-    // Path.relative("/data/orandea/test/aaa", "/data/orandea/impl/bbb")
-    // // returns "../../impl/bbb"
+    //
+    // ```java
+    // String p = Path.relative("/a/b/c/d", "/a/b/e/f");
+    // // returns "../../e/f"
+    //
+    // String p = Path.relative("/a/b/c", "/e/f/g");
+    // // returns "../../../e/f/g"
     // ```
     // 
     // Note: If the arguments to relative have zero-length strings then the current working directory 
     // will be used instead of the zero-length strings. If both the paths are the same then a 
     // zero-length string will be returned.
     public static String relative(String from, String to) {
+        if (from.isEmpty()) {
+            from = System.getProperty("user.dir");
+        }
+        if (to.isEmpty()) {
+            to = System.getProperty("user.dir");
+        }
+        if (from.equals(to)) {
+            return "";
+        }
         String[] fromParts = Path.normalize(from).split(Path.sep);
         String[] toParts = Path.normalize(to).split(Path.sep);
         String path = "";
-        for (int i = 0; i < toParts.length; i++) {
+        for (int i = 0; i < fromParts.length; i++) {
             if (!fromParts[i].isEmpty()) {
                 if (fromParts[i].equals(toParts[i])) {
                     path += Path.sep + "..";
@@ -303,6 +301,9 @@ public class Path {
                     path += Path.sep + toParts[i];
                 }
             }
+        }
+        if (path.length() == 0) {
+            return "";
         }
         return path.substring(1);
     }
