@@ -189,6 +189,9 @@ public class Path {
     // ```java
     // String p = Path.join("/foo", "bar", "baz/asdf", "quux", "..");
     // // returns "/foo/bar/baz/asdf"
+    //
+    // String p = Path.join("..", "bar", "baz/asdf", "quux", "..");
+    // // returns "./baz/asdf"
     // ```
     // Note: If the arguments to join have zero-length strings they will be ignored. If the joined path string 
     // is a zero-length string then `.` will be returned, which represents the current working directory.
@@ -202,6 +205,9 @@ public class Path {
         }
         if (!p[0].isEmpty() && Path.sep.equals(String.valueOf(p[0].charAt(0)))) {
             return Path.sep + path;
+        }
+        if (!p[0].isEmpty() && Path.sep.equals(String.valueOf('.'))) {
+            return "." + Path.sep + path;
         }
         return path;
     }
