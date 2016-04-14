@@ -358,17 +358,24 @@ public class Path {
     // (so also no leading and trailing slashes - it does not distinguish relative and absolute paths).
     protected static String normalizeArray(String[] parts) {
         String path = "";
+        int depth = 0;
         for (String part : parts) {
             // Ignore empty parts.
             if (part.isEmpty() || ".".equals(part)) {
                 continue;
             }
-            if ("..".equals(part) && path.length() > 0) {
-                // Remove the last directory.
-                path = path.substring(0, path.lastIndexOf(Path.sep));
-            } else if (!"..".equals(part)) {
+            if ("..".equals(part)) {
+                if (depth > 0) {
+                    // Remove the last directory.
+                    path = path.substring(0, path.lastIndexOf(Path.sep));
+                }
+                depth--;
+                continue;
+            }
+            if (depth >= 0) {
                 path += Path.sep + part;
             }
+            depth++;
         }
         if (path.length() == 0) {
             return "";
