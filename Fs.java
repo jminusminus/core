@@ -208,9 +208,9 @@ public class Fs {
         if (listOfFiles != null) { // Some JVMs return null for empty directories.
             for(java.io.File f : listOfFiles) {
                 if(f.isDirectory()) {
-                    files = Fs.appendStringArray(files, Fs.readdirr(Path.join(path, f.getName())));
+                    files = Arrays.append(files, Fs.readdirr(Path.join(path, f.getName())));
                 } else {
-                    files = Fs.appendStringArray(files, Path.join(path, f.getName()));
+                    files = Arrays.append(files, Path.join(path, f.getName()));
                 }
             }
         }
@@ -548,21 +548,5 @@ public class Fs {
     // Change the mode of the given java.io.File to 0777.
     protected static boolean chmod0777(java.io.File f) {
         return f.setReadable(true) && f.setWritable(true) && f.setExecutable(true);
-    }
-
-    protected static String[] appendStringArray(String[] a, String b) {
-        int len = a.length;
-        String[] c = new String[len + 1];
-        System.arraycopy(a, 0, c, 0, a.length);
-        c[len] = b;
-        return c;
-    }
-
-    protected static String[] appendStringArray(String[] a, String[] b) {
-        int len = a.length + b.length;
-        String[] c = new String[len];
-        System.arraycopy(a, 0, c, 0, a.length);
-        System.arraycopy(b, 0, c, a.length, b.length);
-        return c;
     }
 }
