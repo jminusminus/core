@@ -192,6 +192,31 @@ public class Fs {
         return files;
     }
 
+    // Recursively reads the contents of a directory at the specified path and returns an array of the names 
+    // of the files in the directory and sub directories excluding '.' and '..'.
+    // 
+    // Example:
+    //
+    // ```java
+    // String[] files = Fs.readdirr("/tmp");
+    // ```
+    // If there is an error null is returned.
+    public static String[] readdirr(String path) {
+        java.io.File folder = new java.io.File(path);
+        java.io.File[] listOfFiles = folder.listFiles();
+        String[] files = new String[0];
+        if (listOfFiles != null) { // Some JVMs return null for empty directories.
+            for(java.io.File f : listOfFiles) {
+                if(f.isDirectory()) {
+                    files = Fs.appendStringArray(files, Fs.readdirr(Path.join(path, f.getName())));
+                } else {
+                    files = Fs.appendStringArray(files, Path.join(path, f.getName()));
+                }
+            }
+        }
+        return files;
+    }
+
     // Reads the entire contents of the specified file into a byte array.
     // 
     // Example:
@@ -523,5 +548,21 @@ public class Fs {
     // Change the mode of the given java.io.File to 0777.
     protected static boolean chmod0777(java.io.File f) {
         return f.setReadable(true) && f.setWritable(true) && f.setExecutable(true);
+    }
+
+    protected static String[] appendStringArray(String[] a, String b) {
+        int len = a.length;
+        String[] c = new String[len + 1];
+        System.arraycopy(a, 0, c, 0, a.length);
+        c[len] = b;
+        return c;
+    }
+
+    protected static String[] appendStringArray(String[] a, String[] b) {
+        int len = a.length + b.length;
+        String[] c = new String[len];
+        System.arraycopy(a, 0, c, 0, a.length);
+        System.arraycopy(b, 0, c, a.length, b.length);
+        return c;
     }
 }

@@ -35,6 +35,13 @@ public class Fs_test extends Test {
         this.assertEqual(true, files == null);
     }
 
+    public void test_readdirr() {
+        this.should("return an array of files from all sub directories");
+        String[] files = Fs.readdirr("./fixtures");
+        java.util.Arrays.sort(files);
+        this.assertEqual(13, files.length);
+    }
+
     public void test_chown_bad_user() {
         this.should("return false as the chmod user is invalid");
         Fs.writeFile("./fixtures/filesystem/xchown.txt", "chown".getBytes());
