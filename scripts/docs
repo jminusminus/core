@@ -8,8 +8,8 @@
 
 echo "Generating Documentation"
 . $JMMHOME/jmm.sh
-jmm doc github.com.jminusminus.core.Path > docs/code.Path.md
-jmm doc github.com.jminusminus.core.Fs > docs/code.Fs.md
+jmm doc github.com.jminusminus.core.Path > docs/core.Path.md
+jmm doc github.com.jminusminus.core.Fs > docs/core.Fs.md
 jmm doc github.com.jminusminus.core.http.Server > docs/http.Server.md
 jmm doc github.com.jminusminus.core.http.IncomingMessage > docs/http.IncomingMessage.md
 jmm doc github.com.jminusminus.core.http.OutgoingMessage > docs/http.OutgoingMessage.md
