@@ -324,4 +324,11 @@ public class Fs_test extends Test {
         this.should("return false as the file doesn't exist");
         this.assertEqual(false, Fs.mtime("/dev/null/foo", (long)123451000));
     }
+
+    public void test_rmdirr() {
+        this.should("remove directory and sub folders");
+        Fs.mkdirs("./fixtures/tmp/foo/bar");
+        Fs.writeFile("./fixtures/tmp/foo/tmp.txt", "bar");
+        this.assertEqual(true, Fs.rmdirr("./fixtures/tmp"));
+    }
 }

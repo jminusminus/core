@@ -239,6 +239,34 @@ public class Fs {
         return Fs.unlink(path);
     }
 
+    // Remove the specified directory. Recursively removes all sub directories and files.
+    // 
+    // Example:
+    //
+    // ```java
+    // boolean b = Fs.rmdir("/tmp/foo");
+    // ```
+    // Returns true on success and false on failure.
+    public static boolean rmdirr(String path) {
+        java.io.File folder = new java.io.File(path);
+        java.io.File[] listOfFiles = folder.listFiles();
+        if (listOfFiles != null) { // Some JVMs return null for empty directories.
+            for(java.io.File f : listOfFiles) {
+                if(f.isDirectory()) {
+                    if (!Fs.rmdirr(Path.join(path, f.getName()))) {
+                        return false;
+                    }
+                } else {
+                    if (!f.delete()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        Fs.unlink(path);
+        return true;
+    }
+
     // Returns the file status of specified path.
     // 
     // Example:
