@@ -309,10 +309,10 @@ public class Path {
         return outputParts.substring(0, outputParts.length() - 1);
     }
 
-    // Resolves to to an absolute path.
+    // Resolves `to` to an absolute path.
     // 
-    // If to isn't already absolute from arguments are pre-pended in right to left order, until an 
-    // absolute path is found. If after using all from paths still no absolute path is found, the 
+    // If `to` isn't already absolute `from` arguments are pre-pended in right to left order, until an 
+    // absolute path is found. If after using all `from` paths still no absolute path is found, the 
     // current working directory is used as well. The resulting path is normalized, and trailing 
     // slashes are removed unless the path gets resolved to the root directory.
     // 
@@ -343,7 +343,8 @@ public class Path {
     // // if currently in /home/myself/node, it returns
     // // "/home/myself/node/wwwroot/static_files/gif/image.gif"
     // ```
-    // Note: If the arguments to resolve have zero-length strings then the current working directory will be used instead of them.
+    // Note: If the arguments to resolve have zero-length strings then the current working directory 
+    // will be used instead of them.
     public static String resolve(String... parts) {
         String path = Path.join(parts);
         switch (String.valueOf(path.charAt(0))) {
