@@ -9,7 +9,7 @@ package github.com.jminusminus.core;
 
 public class Arrays {
 
-    protected static String[] append(String[] a, String b) {
+    public static String[] append(String[] a, String b) {
         int len = a.length;
         String[] c = new String[len + 1];
         System.arraycopy(a, 0, c, 0, a.length);
@@ -17,7 +17,7 @@ public class Arrays {
         return c;
     }
 
-    protected static String[] append(String[] a, String[] b) {
+    public static String[] append(String[] a, String[] b) {
         int len = a.length + b.length;
         String[] c = new String[len];
         System.arraycopy(a, 0, c, 0, a.length);
