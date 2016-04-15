@@ -34,6 +34,9 @@ public class Path {
     // The platform-specific home directory. "%HOMEPATH%" or "~".
     public static final String home = "~";
 
+    // The platform-specific current working directory. "." or ".".
+    public static final String cwd = ".";
+
     public static String basename(String p) {
         return Path.basename(p, null);
     }
@@ -98,10 +101,10 @@ public class Path {
     // // returns ""
     // ```
     public static String extname(String p) {
-        if (p == null || p.isEmpty() || p.charAt(0) == '.' || p.lastIndexOf(".") == -1) {
+        if (p == null || p.isEmpty() || p.charAt(0) == '.' || p.lastIndexOf(Path.cwd) == -1) {
             return "";
         }
-        return p.substring(p.lastIndexOf("."));
+        return p.substring(p.lastIndexOf(Path.cwd));
     }
 
     // Returns a path string from the current Path object. This is the opposite of Path.parse().
@@ -197,17 +200,17 @@ public class Path {
     // is a zero-length string then `.` will be returned, which represents the current working directory.
     public static String join(String... p) {
         if (p.length == 0) {
-            return ".";
+            return Path.cwd;
         }
         String path = Path.normalizeArray(String.join(Path.sep, p).split(Path.sep));
         if (path.isEmpty()) {
-            return ".";
+            return Path.cwd;
         }
         if (!p[0].isEmpty() && Path.sep.equals(String.valueOf(p[0].charAt(0)))) {
             return Path.sep + path;
         }
-        if (!p[0].isEmpty() && ".".equals(String.valueOf(p[0].charAt(0)))) {
-            return "." + Path.sep + path;
+        if (!p[0].isEmpty() && Path.cwd.equals(String.valueOf(p[0].charAt(0)))) {
+            return Path.cwd + Path.sep + path;
         }
         return path;
     }
@@ -363,7 +366,7 @@ public class Path {
         int depth = 0;
         for (String part : parts) {
             // Ignore empty parts.
-            if (part.isEmpty() || ".".equals(part)) {
+            if (part.isEmpty() || Path.cwd.equals(part)) {
                 continue;
             }
             if ("..".equals(part)) {
