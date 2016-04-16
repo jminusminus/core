@@ -84,7 +84,7 @@ public class Arrays {
     // ```
     public static String[] slice(String[] a, int start, int end) {
         int len = a.length;
-        if (start > len || start > end) {
+        if (start > len) {
             return new String[0];
         }
         if (start < 0) {
@@ -96,7 +96,7 @@ public class Arrays {
         if (end < 0) {
             end = a.length + end;
         }
-        String[] b = new String[end - start + 1];
+        String[] b = new String[end - start];
         System.arraycopy(a, start, b, 0, b.length);
         return b;
     }
